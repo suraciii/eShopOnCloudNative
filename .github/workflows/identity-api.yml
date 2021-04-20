@@ -3,7 +3,7 @@ name: identity-api
 on:
   push:
     branches:
-    - dev
+    - sandbox
 
     paths:
     - src/BuildingBlocks/**
