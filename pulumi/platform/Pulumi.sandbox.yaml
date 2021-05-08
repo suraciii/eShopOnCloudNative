@@ -1,0 +1,3 @@
+config:
+  platform:kubernetes_server_url:
+    secure: AAABAGIIDwmTDbAfF5L0odJbXsz0pw5TYF6A3rGC7kEvx3xKhxMZz5ZmzCu/iyv9tBmUu64Nsh1kRw==

@@ -1,0 +1,3 @@
+config:
+  identity-api:kubernetes_server_url:
+    secure: AAABADDNTBOTJWbyuJFa8z+xtRfjOZR1/wRGjaMhfWDInL0CIGGiLy9oCs0S/UnhODkQ8juR+0ixpA==
