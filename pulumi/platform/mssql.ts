@@ -3,6 +3,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as random from "@pulumi/random";
 
 const name = "mssql";
+export const mssql_secret_name = "mssql-secret";
 export function deploy(namespace: k8s.core.v1.Namespace) {
     const secret = deploy_secret(namespace);
     const configmap = deploy_configmap(namespace);
@@ -17,10 +18,10 @@ function deploy_secret(namespace: k8s.core.v1.Namespace) {
         length: 8,
         special: false
     });
-    const mssql_secret = new k8s.core.v1.Secret("mssql-secret", {
+    const mssql_secret = new k8s.core.v1.Secret(mssql_secret_name, {
         metadata: {
             namespace: namespace.metadata.name,
-            name: "mssql-secret"
+            name: mssql_secret_name
         },
         type: "Opaque",
         stringData: {

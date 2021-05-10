@@ -1,3 +1,6 @@
 config:
+  identity-api:ConnectionString:
+    secure: AAABADxmFc9n80bD7uMUz+oi46x97yIYTDDMRSHkAsj+taaPYX8jZK9wvnOQN4QHkD1AidgpL4Bka/rZuiOcJVHtSzNB6swShz7hC4s1TtkDcWtKYqzB6IeYpaPd/w2AeH3ZE5H6ihE12vJ2bH4MT5cF5WeJ2g68
+  identity-api:DPConnectionString: redis-master.eshop.svc.cluster.local,password=7N6V4bQg
   identity-api:kubernetes_server_url:
     secure: AAABADDNTBOTJWbyuJFa8z+xtRfjOZR1/wRGjaMhfWDInL0CIGGiLy9oCs0S/UnhODkQ8juR+0ixpA==

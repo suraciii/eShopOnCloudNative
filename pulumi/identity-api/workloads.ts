@@ -1,10 +1,51 @@
-
+import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ServiceSpecType } from "@pulumi/kubernetes/core/v1";
 import * as kx from "@pulumi/kubernetesx";
-import { app_name, image_repo, namespace_name } from "./core";
+import { app_host, app_name, image_repo, namespace_name } from "./core";
+
+const config = new pulumi.Config();
 
 export function deploy() {
+
+    const secret = deploy_secret();
+    const configmap = deploy_configmap();
+    const deployment = deploy_deployment(configmap, secret);
+    const service = deploy_service(deployment)
+    const ingress = deploy_ingress(service);
+    return { deployment, ingress }
+}
+
+
+function deploy_secret() {
+    const secret = new k8s.core.v1.Secret(app_name, {
+        metadata: {
+            namespace: namespace_name,
+            name: app_name
+        },
+        type: "Opaque",
+        stringData: {
+            "ConnectionString": config.requireSecret("ConnectionString"),
+            "DPConnectionString": config.requireSecret("DPConnectionString")
+        }
+    });
+    return secret;
+}
+
+function deploy_configmap() {
+    const configmap = new k8s.core.v1.ConfigMap(app_name, {
+        metadata: {
+            namespace: namespace_name,
+            name: app_name
+        },
+        data: {
+            "foo": "bar"
+        }
+    });
+    return configmap;
+}
+
+function deploy_deployment(configmap: k8s.core.v1.ConfigMap, secret: k8s.core.v1.Secret) {
     const image_version = process.env["IMAGE_VERSION"];
     if (!image_version) { throw "missing IMAGE_VERSION" }
     const pb = new kx.PodBuilder({
@@ -15,7 +56,6 @@ export function deploy() {
                 httpGet: {
                     path: "/liveness",
                     port: 80
-
                 }
             },
             readinessProbe: {
@@ -23,7 +63,17 @@ export function deploy() {
                     path: "/hc",
                     port: 80
                 }
-            }
+            },
+            env: [{
+                name: "ASPNETCORE_ENVIRONMENT",
+                value: pulumi.getStack()
+            }],
+            envFrom: [{
+                secretRef: { name: secret.metadata.name }
+            }, {
+                configMapRef: { name: configmap.metadata.name }
+
+            }],
         }],
     });
 
@@ -31,13 +81,15 @@ export function deploy() {
         metadata: {
             name: app_name,
             namespace: namespace_name,
-            annotations: { "pulumi.com/skipAwait": "true" }
         },
         spec: pb.asDeploymentSpec({ replicas: 1 })
     });
 
+    return deployment;
+}
 
-    const service = new k8s.core.v1.Service(app_name, {
+function deploy_service(deployment: kx.Deployment) {
+    return new k8s.core.v1.Service(app_name, {
         metadata: {
             name: app_name,
             namespace: namespace_name,
@@ -47,10 +99,11 @@ export function deploy() {
             selector: deployment.spec.template.metadata.labels,
             type: ServiceSpecType.ClusterIP
         }
+    });
+}
 
-    })
-
-    const ingress = new k8s.networking.v1beta1.Ingress(app_name, {
+function deploy_ingress(service: k8s.core.v1.Service) {
+    return new k8s.networking.v1beta1.Ingress(app_name, {
         metadata: {
             name: app_name,
             namespace: namespace_name,
@@ -62,13 +115,13 @@ export function deploy() {
             ingressClassName: "nginx",
             tls: [
                 {
-                    hosts: ["identity.e.doomed.app"],
+                    hosts: [app_host],
                     secretName: "tls-secret"
                 }
             ],
             rules: [
                 {
-                    host: "identity.e.doomed.app",
+                    host: app_host,
                     http: {
                         paths: [
                             {
@@ -85,6 +138,5 @@ export function deploy() {
             ]
         }
     });
-
-    return { deployment, ingress }
 }
+
