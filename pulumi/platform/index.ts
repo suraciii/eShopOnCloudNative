@@ -1,7 +1,7 @@
-import * as k8s from "@pulumi/kubernetes";
-import * as kx from "@pulumi/kubernetesx";
-import * as pulumi from "@pulumi/pulumi";
 import * as core from "./core";
+import * as mssql from "./mssql";
 
-export const { kubeconfig } = core.deploy();
+const c = core.deploy();
+export const kubeconfig = c.kubeconfig;
+mssql.deploy(c.namespace);
 
