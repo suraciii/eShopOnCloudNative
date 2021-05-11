@@ -1,3 +1,12 @@
 config:
   platform:kubernetes_server_url:
     secure: AAABAGIIDwmTDbAfF5L0odJbXsz0pw5TYF6A3rGC7kEvx3xKhxMZz5ZmzCu/iyv9tBmUu64Nsh1kRw==
+  platform:s3:
+    access_key:
+      secure: AAABAARLTjJNHm6lcMOJzxT+BzZg+FbhP4nkJ2gIp+4wzhkb5watHmD8tmO/GGX4t3f4Pw==
+    bucket:
+      secure: AAABAH3OvROznvqYRkj1Q2pSGxXFsEGDFnG1RriRphq9G92S5SawYCg9fEHG1OFjl/0uUwXHctMfqQU=
+    endpoint:
+      secure: AAABACcMRjFDrafeCrbsLRM7mL8nx9eAU0mgAAq7GnNASdTZERecz285fO6LpyAYoEofu4rfYv+Afx7C9tg0iHj8
+    secret_key:
+      secure: AAABALyzni37Rx28BaAqsfyw0s25IlnGov/vUylXRNDkbqd6TWrdbIwbEOGbSSVsRt6IbtbsFJOqtSmlrb3j/+oEqzgOextI

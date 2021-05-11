@@ -14,7 +14,14 @@ export function deploy() {
 
 
 function setup_namespace(name: string) {
-    const namespace = new k8s.core.v1.Namespace(name, { metadata: { name: name } });
+    const namespace = new k8s.core.v1.Namespace(name, {
+        metadata: {
+            name: name,
+            labels: {
+                team: "eshop"
+            }
+        }
+    });
     const service_account = createNamespaceAdminServiceAccount(name);
     return { namespace, service_account };
 }
