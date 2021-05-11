@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ServiceSpecType } from "@pulumi/kubernetes/core/v1";
 import * as kx from "@pulumi/kubernetesx";
-import { app_host, app_name, image_repo, namespace_name } from "./core";
+import { app_host, app_name, image_repo, namespace_name, team_name } from "./core";
 
 const config = new pulumi.Config();
 
@@ -13,7 +13,7 @@ export function deploy() {
     const deployment = deploy_deployment(configmap, secret);
     const service = deploy_service(deployment)
     const ingress = deploy_ingress(service);
-    return { deployment, ingress }
+    return { deployment, service, ingress }
 }
 
 
@@ -93,6 +93,10 @@ function deploy_service(deployment: kx.Deployment) {
         metadata: {
             name: app_name,
             namespace: namespace_name,
+            labels: {
+                app: app_name,
+                team: team_name
+            }
         },
         spec: {
             ports: [{ name: "http", port: 80 }],
