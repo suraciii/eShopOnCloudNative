@@ -1,3 +1,9 @@
+
+# About This Repository
+
+This repostory is a fork of [eShopOnContainer](https://github.com/dotnet-architecture/eShopOnContainers), which is to replace Azure-related infrastructure and technologies by Cloud Native ones.
+
+
 <a href="https://dot.net/architecture">
    <img src="https://github.com/dotnet-architecture/eShopOnContainers/raw/dev/img/eshop_logo.png" alt="eShop logo" title="eShopOnContainers" align="right" height="60" />
 </a>

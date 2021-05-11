@@ -3,7 +3,7 @@ name: identity-api
 on:
   push:
     branches:
-    - sandbox
+    - main
     paths:
     - src/BuildingBlocks/**
     - src/Services/Identity/**

@@ -62,9 +62,14 @@ users:
 }
 
 function createNamespaceAdminServiceAccount(name: string) {
-    const sa = new k8s.core.v1.ServiceAccount(`${name}-admin`, {
+    const service_account = new k8s.core.v1.ServiceAccount(`${name}-admin`, {
         metadata: { name: `${name}-admin`, namespace: name }
     });
+    const subject = {
+        kind: service_account.kind,
+        name: service_account.metadata.name,
+        namespace: service_account.metadata.namespace
+    };
     const crb = new k8s.rbac.v1.RoleBinding(`${name}-admin`, {
         metadata: { name: `${name}-admin`, namespace: name },
         roleRef: {
@@ -72,13 +77,32 @@ function createNamespaceAdminServiceAccount(name: string) {
             kind: "ClusterRole",
             name: "admin",
         },
-        subjects: [
-            {
-                kind: "ServiceAccount",
-                name: sa.metadata.name,
-                namespace: name
-            }
-        ]
+        subjects: [subject]
     });
-    return sa;
+
+    const monitoring_manager_role = new k8s.rbac.v1.Role("monitoring-manager", {
+        metadata: {
+            name: "monitoring-manager",
+            namespace: subject.namespace
+        },
+        rules: [{
+            apiGroups: ["monitoring.coreos.com"],
+            resources: ["servicemonitors"],
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        }]
+    });
+    const monitoring_manager_role_binding = new k8s.rbac.v1.RoleBinding("monitoring-manager", {
+        metadata: {
+            name: "monitoring-manager",
+            namespace: subject.namespace
+        },
+        roleRef: {
+            apiGroup: "rbac.authorization.k8s.io",
+            kind: monitoring_manager_role.kind,
+            name: monitoring_manager_role.metadata.name
+        },
+        subjects: [subject]
+    });
+
+    return service_account;
 }
