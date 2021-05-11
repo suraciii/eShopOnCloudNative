@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { team_name } from "./core";
 import { Namespace, Secret, Service, ServiceAccount } from "@pulumi/kubernetes/core/v1";
 import { Deployment, StatefulSet } from "@pulumi/kubernetes/apps/v1";
-import { ServiceMonitor } from "./prometheus-operator-crds/monitoring/v1";
+import { ServiceMonitor } from "@pulumi/prometheus-operator-crds/monitoring/v1";
 
 const query_labels: { [key: string]: string } = {
     "app.kubernetes.io/component": "query-layer",

@@ -1,11 +1,11 @@
 {
-    "name": "@pulumi/crds",
+    "name": "@pulumi/prometheus-operator-crds",
     "version": "",
     "scripts": {
         "build": "tsc"
     },
-    "peerDependencies": {
-        "@pulumi/pulumi": "latest"
+    "dependencies": {
+        "@pulumi/pulumi": "^3.0.0"
     },
     "pulumi": {
         "resource": true

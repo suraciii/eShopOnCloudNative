@@ -55,10 +55,16 @@ jobs:
         fetch-depth: 1
     - name: Install Pulumi CLI
       uses: pulumi/action-install-pulumi-cli@v1.0.1
+    - name: Npm Install
+      run: |
+        cd prometheus-operator-crds
+        npm install
+        cd ../identity-api
+        npm install
+      working-directory: ./pulumi
     - name: Pulumi up
       run: |
         echo "${{secrets.KUBECONFIG}}" > .kubeconfig
-        npm install
         pulumi stack select sandbox
         pulumi up --yes --skip-preview --suppress-permalink="true"
       working-directory: ./pulumi/identity-api

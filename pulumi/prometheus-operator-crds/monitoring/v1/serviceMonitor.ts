@@ -2,8 +2,7 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
-import * as inputs from "../../types/input";
-import * as outputs from "../../types/output";
+import { input as inputs, output as outputs } from "../../types";
 import * as utilities from "../../utilities";
 
 import {ObjectMeta} from "../../meta/v1";
@@ -55,7 +54,8 @@ export class ServiceMonitor extends pulumi.CustomResource {
      */
     constructor(name: string, args?: ServiceMonitorArgs, opts?: pulumi.CustomResourceOptions) {
         let inputs: pulumi.Inputs = {};
-        if (!(opts && opts.id)) {
+        opts = opts || {};
+        if (!opts.id) {
             inputs["apiVersion"] = "monitoring.coreos.com/v1";
             inputs["kind"] = "ServiceMonitor";
             inputs["metadata"] = args ? args.metadata : undefined;
@@ -66,12 +66,8 @@ export class ServiceMonitor extends pulumi.CustomResource {
             inputs["metadata"] = undefined /*out*/;
             inputs["spec"] = undefined /*out*/;
         }
-        if (!opts) {
-            opts = {}
-        }
-
         if (!opts.version) {
-            opts.version = utilities.getVersion();
+            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
         }
         super(ServiceMonitor.__pulumiType, name, inputs, opts);
     }
@@ -87,5 +83,5 @@ export interface ServiceMonitorArgs {
     /**
      * Specification of desired Service selection for target discovery by Prometheus.
      */
-    readonly spec?: pulumi.Input<inputs.monitoring.v1.ServiceMonitorSpec>;
+    readonly spec?: pulumi.Input<inputs.monitoring.v1.ServiceMonitorSpecArgs>;
 }

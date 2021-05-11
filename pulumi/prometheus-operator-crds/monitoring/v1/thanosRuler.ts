@@ -2,8 +2,7 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
-import * as inputs from "../../types/input";
-import * as outputs from "../../types/output";
+import { input as inputs, output as outputs } from "../../types";
 import * as utilities from "../../utilities";
 
 import {ObjectMeta} from "../../meta/v1";
@@ -59,7 +58,8 @@ export class ThanosRuler extends pulumi.CustomResource {
      */
     constructor(name: string, args?: ThanosRulerArgs, opts?: pulumi.CustomResourceOptions) {
         let inputs: pulumi.Inputs = {};
-        if (!(opts && opts.id)) {
+        opts = opts || {};
+        if (!opts.id) {
             inputs["apiVersion"] = "monitoring.coreos.com/v1";
             inputs["kind"] = "ThanosRuler";
             inputs["metadata"] = args ? args.metadata : undefined;
@@ -72,12 +72,8 @@ export class ThanosRuler extends pulumi.CustomResource {
             inputs["spec"] = undefined /*out*/;
             inputs["status"] = undefined /*out*/;
         }
-        if (!opts) {
-            opts = {}
-        }
-
         if (!opts.version) {
-            opts.version = utilities.getVersion();
+            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
         }
         super(ThanosRuler.__pulumiType, name, inputs, opts);
     }
@@ -93,9 +89,9 @@ export interface ThanosRulerArgs {
     /**
      * Specification of the desired behavior of the ThanosRuler cluster. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
      */
-    readonly spec?: pulumi.Input<inputs.monitoring.v1.ThanosRulerSpec>;
+    readonly spec?: pulumi.Input<inputs.monitoring.v1.ThanosRulerSpecArgs>;
     /**
      * Most recent observed status of the ThanosRuler cluster. Read-only. Not included when requesting from the apiserver, only from the ThanosRuler Operator API itself. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
      */
-    readonly status?: pulumi.Input<inputs.monitoring.v1.ThanosRulerStatus>;
+    readonly status?: pulumi.Input<inputs.monitoring.v1.ThanosRulerStatusArgs>;
 }

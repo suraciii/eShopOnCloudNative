@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
-import { Prometheus } from "./prometheus-operator-crds/monitoring/v1";
+import { Prometheus } from "@pulumi/prometheus-operator-crds/monitoring/v1";
 
 const config = new pulumi.Config();
 const default_name = "eshop";

@@ -2,8 +2,7 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
-import * as inputs from "../../types/input";
-import * as outputs from "../../types/output";
+import { input as inputs, output as outputs } from "../../types";
 import * as utilities from "../../utilities";
 
 import {ObjectMeta} from "../../meta/v1";
@@ -59,7 +58,8 @@ export class Prometheus extends pulumi.CustomResource {
      */
     constructor(name: string, args?: PrometheusArgs, opts?: pulumi.CustomResourceOptions) {
         let inputs: pulumi.Inputs = {};
-        if (!(opts && opts.id)) {
+        opts = opts || {};
+        if (!opts.id) {
             inputs["apiVersion"] = "monitoring.coreos.com/v1";
             inputs["kind"] = "Prometheus";
             inputs["metadata"] = args ? args.metadata : undefined;
@@ -72,12 +72,8 @@ export class Prometheus extends pulumi.CustomResource {
             inputs["spec"] = undefined /*out*/;
             inputs["status"] = undefined /*out*/;
         }
-        if (!opts) {
-            opts = {}
-        }
-
         if (!opts.version) {
-            opts.version = utilities.getVersion();
+            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
         }
         super(Prometheus.__pulumiType, name, inputs, opts);
     }
@@ -93,9 +89,9 @@ export interface PrometheusArgs {
     /**
      * Specification of the desired behavior of the Prometheus cluster. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
      */
-    readonly spec?: pulumi.Input<inputs.monitoring.v1.PrometheusSpec>;
+    readonly spec?: pulumi.Input<inputs.monitoring.v1.PrometheusSpecArgs>;
     /**
      * Most recent observed status of the Prometheus cluster. Read-only. Not included when requesting from the apiserver, only from the Prometheus Operator API itself. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
      */
-    readonly status?: pulumi.Input<inputs.monitoring.v1.PrometheusStatus>;
+    readonly status?: pulumi.Input<inputs.monitoring.v1.PrometheusStatusArgs>;
 }
