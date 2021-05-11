@@ -25,7 +25,7 @@ function deploy_service_monitor(service: Service) {
                 matchLabels: service.metadata.labels
             },
             endpoints: [{
-                port: "http-metrics",
+                port: "http",
                 path: "/metrics",
                 interval: "5s"
             }]
