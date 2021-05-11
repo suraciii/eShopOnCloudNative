@@ -3,7 +3,8 @@ import * as k8s from "@pulumi/kubernetes";
 import * as kx from "@pulumi/kubernetesx";
 import * as pulumi from "@pulumi/pulumi";
 
-export const namespace_name = "eshop"
+export const team_name = "eshop";
+export const namespace_name = "eshop";
 
 export function deploy() {
     const { namespace, service_account } = setup_namespace(namespace_name);

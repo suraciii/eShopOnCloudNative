@@ -20,12 +20,12 @@ interface s3config {
 
 export function deploy(namespace: k8s.core.v1.Namespace) {
     const service_account = deploy_rbac(namespace);
-    const secret = deploy_storage_secret(namespace);
-    const prometheus = deploy_prometheus(namespace, secret, service_account);
-    return prometheus;
+    const object_storage_secret = deploy_object_storage_secret(namespace);
+    const prometheus = deploy_prometheus(namespace, object_storage_secret, service_account);
+    return {object_storage_secret, prometheus};
 }
 
-function deploy_storage_secret(namespace: k8s.core.v1.Namespace) {
+function deploy_object_storage_secret(namespace: k8s.core.v1.Namespace) {
     const s3config = config.requireSecretObject<s3config>("s3");
     const secretContent = pulumi.interpolate`
     type: s3
@@ -197,3 +197,5 @@ function deploy_prometheus(namespace: k8s.core.v1.Namespace, secret: pulumi.Outp
 
     return prometheus;
 }
+
+
