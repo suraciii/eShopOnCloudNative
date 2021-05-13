@@ -1,6 +1,4 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using HealthChecks.UI.Client;
+﻿using HealthChecks.UI.Client;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -35,8 +33,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
             services.AddSingleton(collector);
@@ -113,16 +110,17 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
             services.AddControllers();
             services.AddControllersWithViews();
             services.AddRazorPages();
-
-            var container = new ContainerBuilder();
-            container.Populate(services);
-
-            return new AutofacServiceProvider(container.Build());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            //if (Configuration.GetValue<bool>("Seeding"))
+            //{
+            //    app.Seed();
+            //    return;
+            //}
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

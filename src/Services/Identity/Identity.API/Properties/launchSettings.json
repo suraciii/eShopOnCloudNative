@@ -21,6 +21,7 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:55105",
       "environmentVariables": {
+        "Seeding": "true",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
