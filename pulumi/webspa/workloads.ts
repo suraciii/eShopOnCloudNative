@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ServiceSpecType } from "@pulumi/kubernetes/core/v1";
 import * as kx from "@pulumi/kubernetesx";
-import { app_host, app_name, image_repo, namespace_name, spa_url, team_name } from "./core";
+import { app_host, app_name, image_repo, namespace_name, team_name } from "./core";
 
 const config = new pulumi.Config();
 
@@ -25,8 +25,8 @@ function deploy_secret() {
         },
         type: "Opaque",
         stringData: {
-            "ConnectionString": config.requireSecret("ConnectionString"),
-            "DPConnectionString": config.requireSecret("DPConnectionString")
+            "foo": "bar"
+            // "DPConnectionString": config.requireSecret("DPConnectionString")
         }
     });
     return secret;
@@ -39,7 +39,9 @@ function deploy_configmap() {
             name: app_name
         },
         data: {
-            "SpaClient": spa_url
+            "IdentityUrlHC": "http://identity-api.eshop.svc.cluster.local/hc",
+            "IdentityUrl": "https://identity-api.eshop.ichnb.com",
+            "CallBackUrl": `https://${app_host}/`
         }
     });
     return configmap;

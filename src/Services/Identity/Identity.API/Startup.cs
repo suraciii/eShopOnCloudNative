@@ -38,7 +38,6 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            // RegisterAppInsights(services);
             var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
             services.AddSingleton(collector);
 
@@ -124,11 +123,6 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            //loggerFactory.AddDebug();
-            //loggerFactory.AddAzureWebAppDiagnostics();
-            //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -147,12 +141,12 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
 
             app.UseStaticFiles();
 
-            // Make work identity server redirections in Edge and lastest versions of browers. WARN: Not valid in a production environment.
-            app.Use(async (context, next) =>
-            {
-                context.Response.Headers.Add("Content-Security-Policy", "script-src 'unsafe-inline'");
-                await next();
-            });
+            // // Make work identity server redirections in Edge and lastest versions of browers. WARN: Not valid in a production environment.
+            // app.Use(async (context, next) =>
+            // {
+            //     context.Response.Headers.Add("Content-Security-Policy", "script-src 'unsafe-inline'");
+            //     await next();
+            // });
 
             app.UseForwardedHeaders();
             // Adds IdentityServer
@@ -179,12 +173,6 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
                     Predicate = r => r.Name.Contains("self")
                 });
             });
-        }
-
-        private void RegisterAppInsights(IServiceCollection services)
-        {
-            services.AddApplicationInsightsTelemetry(Configuration);
-            services.AddApplicationInsightsKubernetesEnricher();
         }
     }
 }
