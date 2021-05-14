@@ -166,7 +166,9 @@ function deploy_ingress(service: Service) {
             name: app_name,
             namespace: namespace_name,
             annotations: {
-                "cert-manager.io/cluster-issuer": "letsencrypt"
+                "cert-manager.io/cluster-issuer": "letsencrypt",
+                "nginx.ingress.kubernetes.io/proxy-buffers-number": "8",
+                "nginx.ingress.kubernetes.io/proxy-buffer-size": "16k"
             }
         },
         spec: {
