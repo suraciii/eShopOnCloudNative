@@ -40,6 +40,9 @@ COPY "Web/WebMVC/WebMVC.csproj" "Web/WebMVC/WebMVC.csproj"
 COPY "Web/WebSPA/WebSPA.csproj" "Web/WebSPA/WebSPA.csproj"
 COPY "Web/WebStatus/WebStatus.csproj" "Web/WebStatus/WebStatus.csproj"
 
+COPY "Sandboxes/Sandbox.A/Sandbox.A.csproj" "Sandboxes/Sandbox.A/Sandbox.A.csproj"
+COPY "Sandboxes/Sandbox.B/Sandbox.B.csproj" "Sandboxes/Sandbox.B/Sandbox.B.csproj"
+
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 
 COPY "NuGet.config" "NuGet.config"

@@ -1,4 +1,8 @@
-﻿using Autofac;
+﻿using System;
+using System.Data.Common;
+using System.IO;
+using System.Reflection;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Catalog.API.Grpc;
 using global::Catalog.API.Infrastructure.Filters;
@@ -27,10 +31,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
-using System;
-using System.Data.Common;
-using System.IO;
-using System.Reflection;
 
 namespace Microsoft.eShopOnContainers.Services.Catalog.API
 {
@@ -190,9 +190,24 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
             }
             else
             {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
                 hcBuilder
                     .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
+                        _ => factory,
                         name: "catalog-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

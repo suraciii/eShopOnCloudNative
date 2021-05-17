@@ -1,4 +1,8 @@
-﻿using Catalog.API.Extensions;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using Catalog.API.Extensions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -11,9 +15,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
-using System;
-using System.IO;
-using System.Net;
+
+bool seed = false;
+Console.WriteLine(string.Join(",  ", args));
+if (args.Length >= 3 && args[2] == "seed")
+{
+    seed = true;
+    args = args.Skip(1).ToArray();
+}
 
 var configuration = GetConfiguration();
 
@@ -24,21 +33,27 @@ try
     Log.Information("Configuring web host ({ApplicationContext})...", Program.AppName);
     var host = CreateHostBuilder(configuration, args);
 
-    Log.Information("Applying migrations ({ApplicationContext})...", Program.AppName);
-    host.MigrateDbContext<CatalogContext>((context, services) =>
+    if (seed)
     {
-        var env = services.GetService<IWebHostEnvironment>();
-        var settings = services.GetService<IOptions<CatalogSettings>>();
-        var logger = services.GetService<ILogger<CatalogContextSeed>>();
+        Log.Information("Applying migrations ({ApplicationContext})...", Program.AppName);
+        host.MigrateDbContext<CatalogContext>((context, services) =>
+        {
+            var env = services.GetService<IWebHostEnvironment>();
+            var settings = services.GetService<IOptions<CatalogSettings>>();
+            var logger = services.GetService<ILogger<CatalogContextSeed>>();
 
-        new CatalogContextSeed()
-                                            .SeedAsync(context, env, settings, logger)
-                                            .Wait();
-    })
-    .MigrateDbContext<IntegrationEventLogContext>((_, __) => { });
+            new CatalogContextSeed()
+                                                .SeedAsync(context, env, settings, logger)
+                                                .Wait();
+        })
+        .MigrateDbContext<IntegrationEventLogContext>((_, __) => { });
+    }
+    else
+    {
+        Log.Information("Starting web host ({ApplicationContext})...", Program.AppName);
+        host.Run();
+    }
 
-    Log.Information("Starting web host ({ApplicationContext})...", Program.AppName);
-    host.Run();
 
     return 0;
 }

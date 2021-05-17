@@ -13,7 +13,8 @@ const image = `${image_repo}:linux-${image_version}`;
 export function deploy() {
     const secret = deploy_secret();
     const configmap = deploy_configmap();
-    const deployment = deploy_deployment(configmap, secret);
+    const job = deploy_migration_job(configmap, secret);
+    const deployment = deploy_deployment(configmap, secret, job);
     const service = deploy_service(deployment)
     return { deployment, service }
 }
@@ -27,7 +28,10 @@ function deploy_secret() {
         },
         type: "Opaque",
         stringData: {
-            "foo": "bar"
+            "ConnectionString": config.requireSecret("ConnectionString"),
+            "EventBusConnection": config.requireSecret("EventBusConnection"),
+            "EventBusUserName": config.requireSecret("EventBusUserName"),
+            "EventBusPassword": config.requireSecret("EventBusPassword"),
         }
     });
     return secret;
@@ -40,23 +44,53 @@ function deploy_configmap() {
             name: app_name
         },
         data: {
-            "urls__basket": "http://basket-api.eshop.svc.cluster.local",
-            "urls__catalog": "http://catalog-api.eshop.svc.cluster.local",
-            "urls__orders": "http://localhost:5555",
-            "urls__identity": "http://identity-api.eshop.svc.cluster.local",
-            "urls__grpcCatalog": "http://localhost:5555",
-            "urls__grpcOrdering": "http://localhost:5555",
-            "CatalogUrlHC": "http://localhost:5555/hc",
-            "OrderingUrlHC": "http://localhost:5555/hc",
-            "BasketUrlHC": "http://localhost:5555/hc",
-            "IdentityUrlHC": "http://identity-api.eshop.svc.cluster.local/hc",
-            "PaymentUrlHC": "http://localhost:5555/hc",
+            "foo": "bar"
         }
     });
     return configmap;
 }
 
-function deploy_deployment(configmap: ConfigMap, secret: Secret) {
+function deploy_migration_job(configmap: ConfigMap, secret: Secret) {
+    const job_name = `${service_name}-migration`;
+    const labels = {
+        app: app_name,
+        component: "migration"
+    };
+    const job = new Job(job_name, {
+        metadata: {
+            name: job_name,
+            namespace: namespace_name,
+            labels: labels
+        },
+        spec: {
+            template: {
+                metadata: {
+                    labels: labels
+                },
+                spec: {
+                    restartPolicy: "Never",
+                    containers: [{
+                        name: job_name,
+                        image: image,
+                        args: ["dotnet", "Catalog.API.dll", "seed"],
+                        env: [{
+                            name: "ASPNETCORE_ENVIRONMENT",
+                            value: pulumi.getStack()
+                        }],
+                        envFrom: [{
+                            secretRef: { name: secret.metadata.name }
+                        }, {
+                            configMapRef: { name: configmap.metadata.name }
+                        }],
+                    }]
+                }
+            }
+        }
+    });
+    return job;
+}
+
+function deploy_deployment(configmap: ConfigMap, secret: Secret, migration_job: Job) {
     const labels = {
         app: app_name,
         component: "server"
@@ -105,7 +139,7 @@ function deploy_deployment(configmap: ConfigMap, secret: Secret) {
                 }
             }
         }
-    });
+    }, { dependsOn: migration_job });
     return deployment;
 }
 

@@ -49,6 +49,7 @@ function deploy_configmap() {
     return configmap;
 }
 
+
 function deploy_deployment(configmap: ConfigMap, secret: Secret) {
     const labels = {
         app: app_name,
