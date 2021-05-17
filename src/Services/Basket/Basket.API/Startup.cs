@@ -1,4 +1,8 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Basket.API.Infrastructure.Filters;
 using Basket.API.IntegrationEvents.EventHandling;
@@ -29,10 +33,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 
 namespace Microsoft.eShopOnContainers.Services.Basket.API
 {
@@ -350,9 +350,25 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             }
             else
             {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
+
                 hcBuilder
                     .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
+                        (s) => factory,
                         name: "basket-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

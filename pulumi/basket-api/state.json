@@ -1,0 +1,591 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2021-05-17T03:59:35.50383976Z",
+            "magic": "2677d89dea3a3aa32e930e701c30bae30aeb64db23ff002feb06c42186fc7e72",
+            "version": "v3.2.1"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "surac",
+                "project": "basket-api",
+                "stack": "sandbox"
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:sandbox::basket-api::pulumi:pulumi:Stack::basket-api-sandbox",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack"
+            },
+            {
+                "urn": "urn:pulumi:sandbox::basket-api::pulumi:providers:kubernetes::default_3_1_1",
+                "custom": true,
+                "id": "e998b273-4dc6-42cc-89d7-5bdb63da67de",
+                "type": "pulumi:providers:kubernetes",
+                "inputs": {
+                    "version": "3.1.1"
+                },
+                "outputs": {
+                    "version": "3.1.1"
+                }
+            },
+            {
+                "urn": "urn:pulumi:sandbox::basket-api::kubernetes:core/v1:Secret::basket-api",
+                "custom": true,
+                "id": "eshop/basket-api",
+                "type": "kubernetes:core/v1:Secret",
+                "inputs": {
+                    "apiVersion": "v1",
+                    "kind": "Secret",
+                    "metadata": {
+                        "labels": {
+                            "app.kubernetes.io/managed-by": "pulumi"
+                        },
+                        "name": "basket-api",
+                        "namespace": "eshop"
+                    },
+                    "stringData": {
+                        "ConnectionString": {
+                            "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                            "ciphertext": "AAABAF7ck1TL853B8TjYRGGkd5mTsS5W9xX2b6EdhrFgjXEAp8Af2OZPL6eOm7b1b82VRDL1Fgd/AbJ9nQNvUkTciPNjOmWnpClfS70Q39suV+7iFkQzOw=="
+                        },
+                        "EventBusConnection": {
+                            "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                            "ciphertext": "AAABAPt1qlwpJ/3OrbsxPP0CdZAiuRftSB8lcTT67bYJL1+ptTDHG7x3rXN14hv1WTSeOzYoaxbSwDpnsONPiObbOKsDNtsaW6kXZhxV6BFRyRZ/FUhPceWLFE4RR8VBEBi8mspgbg=="
+                        }
+                    },
+                    "type": "Opaque"
+                },
+                "outputs": {
+                    "__initialApiVersion": "v1",
+                    "__inputs": {
+                        "apiVersion": "v1",
+                        "kind": "Secret",
+                        "metadata": {
+                            "labels": {
+                                "app.kubernetes.io/managed-by": "pulumi"
+                            },
+                            "name": "basket-api",
+                            "namespace": "eshop"
+                        },
+                        "stringData": {
+                            "ConnectionString": {
+                                "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                "ciphertext": "AAABAJciCqbiJ9JWV8Q19i+LwWFstlHq/i0pEcsIRreSDM1aSWaQpb8RJ+ly+AvAjn7ZOQ/ERwRE1uxOqDhp6I/fWJnLUastXUe2EH85bOeam/OtfaQghg=="
+                            },
+                            "EventBusConnection": {
+                                "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                "ciphertext": "AAABACchIbjWonogv4luMjvpOD0xZboAx05H6tzKssHRJ/Ce1o6duu6WiSoyyrCSrPMX++romaoAMUPePII9EgeLQaf4CYfePNt8Rrvp5BDKgaf5DVvTjBMQYHuuZtUSuRMQ96MzOQ=="
+                            }
+                        },
+                        "type": "Opaque"
+                    },
+                    "apiVersion": "v1",
+                    "data": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABAOTJxUf2o3HRnpVy/CQaa3p9yXymNdeITlWZqpu4/DGD9eJw1N+g3Uktm2ywTyVqRSfmcIz/7W0GIIzcgNzciV15pvbApTjdBgKVpei8XYcQJO95YZOm8lwNaJuYaTIpbwlM2DT94qo6M1YH/n6ACOLXxvkZWADX0X1LDb4kDc5H1JqrcGdlOWnxViuEe07Vgwb+qhPHJaaieyL1zV8bhDF/7olvzL1LUWhQoljPgE3+EA46j+JTlqWEbWw/38U+46E6FZhCJK65GMYxlOkHLvl9Zdu/+/YFRrsRKaRrfzIY0oYxQub9WaFDo7ZY6TQi/tiD3vGI32d1vyiRPS2CMoAnJDxyYzN2qW+NjWa1Wam/RfpLbVy+uTW85c9pQO+rCmx+SsGlQbwoNK4sPMTV21BE945D0q3zhQwFI2vAhWU7nKhBzj07TqSTrE1OMVucvB8YN9OSF/cD9OYz/u89HCpdF6ilzSkAwrTwZZy9fW0Xv5re+bW4Lk7xzy5L05wIDleWecdEk5Wg7lJnZJiLpRFZu7EZSgvVcMZdeZp4/KgrbQ=="
+                    },
+                    "kind": "Secret",
+                    "metadata": {
+                        "annotations": {
+                            "kubectl.kubernetes.io/last-applied-configuration": {
+                                "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                "ciphertext": "AAABACOQsSCQUTClfgEhPgaCKVdqKyZVDCv2aHYBJIeH/JB9lQlVhK5dSlPxY/8AlMRT2EDAMoAD2EbA8lM1Bpj6ta44+HzUd4O1qSWhiZ3rbM80TmWkbZPSaSW+GZgJ/5ggvcuEHZL5GNl93JQA881BZifGJY1402T1wB+rPeJnJkKy/9K2y6om3+litFkxZyolXgLeSXVkGiuiFJ1UPJqkr7fObvJYXHl9WOit+/fA+S2fsusSC1FW6sQ+YpQv4I3p2vvHjH/0Fr1lPVkpvWxA5rJi1uwN02WfUEoUBZVRKT3/58GOyCEF5TUuWPSxDzxbN+VYlEmeYnsTmidlZgvVTx6vjY/gltEDvYOrhhLs/eSSzJvFTX38y9sp4uiijA1P6AcwI8ccOIo1ER5YBlIuoY68W5rnhNPhj31ImNlyfXkoBLFq17WF9Xdwkp1xY/N/aUvz0Cr1RBv/LLSCsxqgb7V2xbJ1A0CGUs2obDlY/GgTxjb7+LtzrLDZFRAv6qzEG7FMgOPcIkqKdEFmO1PY9YKlAkO0SQy4M/8="
+                            }
+                        },
+                        "creationTimestamp": "2021-05-17T03:42:06Z",
+                        "labels": {
+                            "app.kubernetes.io/managed-by": "pulumi"
+                        },
+                        "managedFields": [
+                            {
+                                "apiVersion": "v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:data": {
+                                        ".": {},
+                                        "f:ConnectionString": {},
+                                        "f:EventBusConnection": {}
+                                    },
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            ".": {},
+                                            "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                                        },
+                                        "f:labels": {
+                                            ".": {},
+                                            "f:app.kubernetes.io/managed-by": {}
+                                        }
+                                    },
+                                    "f:type": {}
+                                },
+                                "manager": "pulumi-resource-kubernetes",
+                                "operation": "Update",
+                                "time": "2021-05-17T03:42:06Z"
+                            }
+                        ],
+                        "name": "basket-api",
+                        "namespace": "eshop",
+                        "resourceVersion": "22209367",
+                        "selfLink": "/api/v1/namespaces/eshop/secrets/basket-api",
+                        "uid": "36ee3c3f-f653-4666-bceb-045b6bf934cf"
+                    },
+                    "type": "Opaque"
+                },
+                "parent": "urn:pulumi:sandbox::basket-api::pulumi:pulumi:Stack::basket-api-sandbox",
+                "provider": "urn:pulumi:sandbox::basket-api::pulumi:providers:kubernetes::default_3_1_1::e998b273-4dc6-42cc-89d7-5bdb63da67de",
+                "propertyDependencies": {
+                    "apiVersion": null,
+                    "kind": null,
+                    "metadata": null,
+                    "stringData": null,
+                    "type": null
+                },
+                "additionalSecretOutputs": [
+                    "data",
+                    "stringData"
+                ]
+            },
+            {
+                "urn": "urn:pulumi:sandbox::basket-api::kubernetes:core/v1:ConfigMap::basket-api",
+                "custom": true,
+                "id": "eshop/basket-api",
+                "type": "kubernetes:core/v1:ConfigMap",
+                "inputs": {
+                    "apiVersion": "v1",
+                    "data": {
+                        "IdentityUrl": "http://identity-api.eshop.svc.cluster.local"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                        "labels": {
+                            "app.kubernetes.io/managed-by": "pulumi"
+                        },
+                        "name": "basket-api",
+                        "namespace": "eshop"
+                    }
+                },
+                "outputs": {
+                    "__initialApiVersion": "v1",
+                    "__inputs": {
+                        "apiVersion": "v1",
+                        "data": {
+                            "IdentityUrl": "http://identity-api.eshop.svc.cluster.local"
+                        },
+                        "kind": "ConfigMap",
+                        "metadata": {
+                            "labels": {
+                                "app.kubernetes.io/managed-by": "pulumi"
+                            },
+                            "name": "basket-api",
+                            "namespace": "eshop"
+                        }
+                    },
+                    "apiVersion": "v1",
+                    "data": {
+                        "IdentityUrl": "http://identity-api.eshop.svc.cluster.local"
+                    },
+                    "kind": "ConfigMap",
+                    "metadata": {
+                        "annotations": {
+                            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"IdentityUrl\":\"http://identity-api.eshop.svc.cluster.local\"},\"kind\":\"ConfigMap\",\"metadata\":{\"labels\":{\"app.kubernetes.io/managed-by\":\"pulumi\"},\"name\":\"basket-api\",\"namespace\":\"eshop\"}}\n"
+                        },
+                        "creationTimestamp": "2021-05-17T03:42:06Z",
+                        "labels": {
+                            "app.kubernetes.io/managed-by": "pulumi"
+                        },
+                        "managedFields": [
+                            {
+                                "apiVersion": "v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:data": {
+                                        ".": {},
+                                        "f:IdentityUrl": {}
+                                    },
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            ".": {},
+                                            "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                                        },
+                                        "f:labels": {
+                                            ".": {},
+                                            "f:app.kubernetes.io/managed-by": {}
+                                        }
+                                    }
+                                },
+                                "manager": "pulumi-resource-kubernetes",
+                                "operation": "Update",
+                                "time": "2021-05-17T03:42:06Z"
+                            }
+                        ],
+                        "name": "basket-api",
+                        "namespace": "eshop",
+                        "resourceVersion": "22209366",
+                        "selfLink": "/api/v1/namespaces/eshop/configmaps/basket-api",
+                        "uid": "e31dfadd-ee3a-494f-9b53-bfb2a4af3599"
+                    }
+                },
+                "parent": "urn:pulumi:sandbox::basket-api::pulumi:pulumi:Stack::basket-api-sandbox",
+                "provider": "urn:pulumi:sandbox::basket-api::pulumi:providers:kubernetes::default_3_1_1::e998b273-4dc6-42cc-89d7-5bdb63da67de",
+                "propertyDependencies": {
+                    "apiVersion": null,
+                    "data": null,
+                    "kind": null,
+                    "metadata": null
+                }
+            },
+            {
+                "urn": "urn:pulumi:sandbox::basket-api::kubernetes:apps/v1:Deployment::basket-api",
+                "custom": true,
+                "id": "eshop/basket-api",
+                "type": "kubernetes:apps/v1:Deployment",
+                "inputs": {
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                        "labels": {
+                            "app": "basket-api",
+                            "app.kubernetes.io/managed-by": "pulumi",
+                            "component": "server"
+                        },
+                        "name": "basket-api",
+                        "namespace": "eshop"
+                    },
+                    "spec": {
+                        "selector": {
+                            "matchLabels": {
+                                "app": "basket-api",
+                                "component": "server"
+                            }
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": {
+                                    "app": "basket-api",
+                                    "component": "server"
+                                }
+                            },
+                            "spec": {
+                                "containers": {
+                                    "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                    "ciphertext": "AAABANY27+GA59VwlM20oSaD8+szP4+jS5W96tzn9D8DiS/tSodnaG/ccUqVNTzvvg+9VNvgxoClm3Ej3W8nEZ87967freUR7r0eBSIxh1xXvmh9KRfrAXoQIpKXMKFL4Y3ZwBcY/Pq9YVZ/OLuzSUZy3gIzeNcai+x5W+5rjuMT7HL9/AdkHPnWZIDCxqVm80VVntkCAIYXKPKo3D/hwjytXqtk9fA6PpLh9KNUjlbbGqV8rmFVgA6gpQrPcm5Ns2reFmPjciTYwaUBTkAPILz42Z2q1XUxfEvQquQ6+/WP5PYwbgVcRs6+dfr/Z/mmHW7yQmNhx3neBxWKC+W0er6/swxiR1Jrbia3BdY7DR4IIeIGE4jI1bSpDcdk+5x1tb0JzZB72VUYcU8i/dkHaKYJMDyjIOTtadzpcMXM1641Ownu3I0ErPCRqZlihBsPvkt26K7HsuprZiRzJAH+Eq0PZE0WR4UN2f7rOTSDUKFA7erMY5tJJ91QTz6IfTz4JoDfNfjBJ7RBtJRRVh3Upssnezo+y3yH0r3KQQ=="
+                                }
+                            }
+                        }
+                    }
+                },
+                "outputs": {
+                    "__initialApiVersion": "apps/v1",
+                    "__inputs": {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "metadata": {
+                            "labels": {
+                                "app": "basket-api",
+                                "app.kubernetes.io/managed-by": "pulumi",
+                                "component": "server"
+                            },
+                            "name": "basket-api",
+                            "namespace": "eshop"
+                        },
+                        "spec": {
+                            "selector": {
+                                "matchLabels": {
+                                    "app": "basket-api",
+                                    "component": "server"
+                                }
+                            },
+                            "template": {
+                                "metadata": {
+                                    "labels": {
+                                        "app": "basket-api",
+                                        "component": "server"
+                                    }
+                                },
+                                "spec": {
+                                    "containers": {
+                                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                        "ciphertext": "AAABAMJp1y+9uSD+z+1E9om4bN7Xv2FYmR4ewF+z6PikGwDmlKGoI8dMNKynqMD72k6lG4maqLm9+4mIgKQZbH/khI33UD1IotRbnlWvwF/PdqK/DMX66Icqi7Q3Uhxj7sPCUB54J8E8y9dHHnTw6eroFQrJy35whab3TTElpxu996axhS+cGyEwV4CCHB96WWf9mOA/9sLXVSAg1vXnGZ0h6+kbr/Yc+sqKPFW+SlA/6BpBpBmxy9ppVbtBaLHQVjl118/XrolIUHxy1PasohmBFinlu6CpLVBTxqA90DH4JBXuCj1EBdqQL8r4k1rVt0jCnDcC/7NC2JMYRi6q2gQpwaksfSq8mx0NFpJs8Immemlb00OIrMgXp1NV2P37A/+/ncqyGQ1vw0oHNCAEavm9ln/d57Bt8shZtBf0SJxjGgwUThkbyf8JS8m30QCksEI5/ud2NQfuA9zm2r6Ohv86z1zix3NfBuO2TSE/Nh7oANsUHgT5W27I5hpVcnAVob2wtA6MpigtNX8ecFLHS4bz9MTpv8wfeKlXug=="
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "apiVersion": "apps/v1",
+                    "kind": "Deployment",
+                    "metadata": {
+                        "annotations": {
+                            "deployment.kubernetes.io/revision": "1",
+                            "kubectl.kubernetes.io/last-applied-configuration": {
+                                "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                "ciphertext": "AAABACjgSVrrXteD3UFjG78+nyQHr3nJvnyib5krTOONqLKztfaMaKSozsW2V1LYPcYQ8qCInw7yD6tLYZY2BfFSaY/SEd/Z0443xBo/442VUqEQp2zV20zLdWnhlO0DPMqsa6psWXwBIkEVQ6sgku6bMScG7lHQ6qwmWCPKz1N7QiC1ylCv4EJBdSQJ3+CeL/CYruqsTEco5N35wN9VgJl17upBQntdVHeg0WvviybZCxPAsj7zA9K8uMq9H034dY/xuq3P0WoNHdVNpziDqlfqN4uo0WU4PchZyDz7o1CkmEwQ17PoXu+34D04wkyqrkI6b6/RicStPTcPheGnpYiQdLikJgKRCMG0zvl9QI4t+GK2ZQAiCtpDnhXk3CM8+ziHCizsTkbXeDuCL4o9sNA71egvYghoMkOl/dTFpwSfCtZZwNdjHVridCx5wElGND5jjn3BqZEh0uCMHKMouX7BUcL1NKEN+/8hYQYhhCL2siqn6nBbcoV+NOq5IyTxWA1TL6R1WLKuNdanlg9lB6nOVLYREwKf6AH+994Q5TO+6yJ43Rq4a3Fp35ws0zeUkr46+E6qtADoXz/mVLkNEOEWhHD+EC76x3a6ZBe/kUedQl/ErrSLgZueMqxSRp+bN13zDLQIKc5SFV24nt7Afa/ZLfQxAniAkcKDuvwb5hI2GjHF8TkCLphbY+cpRJgNOIRTQt9+hkVpLwSFHiu1CjJ5uQgwmP5XwKF1QHmjBtZyhuuRWzcilTIau3DWa22BySsGm0CF5WpmnDuuL9vNvutIFncpetqvk8umXICKi6vVy4RsRAmmhsxkocB+XjJaYdvAtSYe/NG2OCIT5ZNKf6t3d0huptSeSKIJ2BDuKvmdtGJXjtf9sOGo9J1Uv7dg/YkKMUJGU78GmVfPeskfyDh8bE1jbib5pRGT+5Vz4v7VibpLWu8wy4pb63qcQS1UBBidDk5kBCOOfzoz7YBC6eB+9BB7TG7f0+F6YxUZq7v0rj8d7pEhHrRrw7cflQ/pLgMACkzVzCVcwsyL0AXA0unx8GXaUkUh1+iprxn1uLxwYntOf3NSgFxyTqV+bb+tbpG95DzqWLIM8hpreTo5jA99fGtMM7On4z0D5gPoFal/2faWqRTYB6ZPbyx/hJxfClU7amcdb3bzxKpDpwMIF7NE1vkLx5cBVGqaphwfhILOrZ5ylWebfV3X"
+                            }
+                        },
+                        "creationTimestamp": "2021-05-17T03:42:07Z",
+                        "generation": 1,
+                        "labels": {
+                            "app": "basket-api",
+                            "app.kubernetes.io/managed-by": "pulumi",
+                            "component": "server"
+                        },
+                        "managedFields": [
+                            {
+                                "apiVersion": "apps/v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            ".": {},
+                                            "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                                        },
+                                        "f:labels": {
+                                            ".": {},
+                                            "f:app": {},
+                                            "f:app.kubernetes.io/managed-by": {},
+                                            "f:component": {}
+                                        }
+                                    },
+                                    "f:spec": {
+                                        "f:progressDeadlineSeconds": {},
+                                        "f:replicas": {},
+                                        "f:revisionHistoryLimit": {},
+                                        "f:selector": {
+                                            "f:matchLabels": {
+                                                ".": {},
+                                                "f:app": {},
+                                                "f:component": {}
+                                            }
+                                        },
+                                        "f:strategy": {
+                                            "f:rollingUpdate": {
+                                                ".": {},
+                                                "f:maxSurge": {},
+                                                "f:maxUnavailable": {}
+                                            },
+                                            "f:type": {}
+                                        },
+                                        "f:template": {
+                                            "f:metadata": {
+                                                "f:labels": {
+                                                    ".": {},
+                                                    "f:app": {},
+                                                    "f:component": {}
+                                                }
+                                            },
+                                            "f:spec": {
+                                                "f:containers": {
+                                                    "k:{\"name\":\"basket-api\"}": {
+                                                        ".": {},
+                                                        "f:env": {
+                                                            ".": {},
+                                                            "k:{\"name\":\"ASPNETCORE_ENVIRONMENT\"}": {
+                                                                ".": {},
+                                                                "f:name": {},
+                                                                "f:value": {}
+                                                            }
+                                                        },
+                                                        "f:envFrom": {},
+                                                        "f:image": {},
+                                                        "f:imagePullPolicy": {},
+                                                        "f:livenessProbe": {
+                                                            ".": {},
+                                                            "f:failureThreshold": {},
+                                                            "f:httpGet": {
+                                                                ".": {},
+                                                                "f:path": {},
+                                                                "f:port": {},
+                                                                "f:scheme": {}
+                                                            },
+                                                            "f:periodSeconds": {},
+                                                            "f:successThreshold": {},
+                                                            "f:timeoutSeconds": {}
+                                                        },
+                                                        "f:name": {},
+                                                        "f:ports": {
+                                                            ".": {},
+                                                            "k:{\"containerPort\":80,\"protocol\":\"TCP\"}": {
+                                                                ".": {},
+                                                                "f:containerPort": {},
+                                                                "f:name": {},
+                                                                "f:protocol": {}
+                                                            }
+                                                        },
+                                                        "f:readinessProbe": {
+                                                            ".": {},
+                                                            "f:failureThreshold": {},
+                                                            "f:httpGet": {
+                                                                ".": {},
+                                                                "f:path": {},
+                                                                "f:port": {},
+                                                                "f:scheme": {}
+                                                            },
+                                                            "f:periodSeconds": {},
+                                                            "f:successThreshold": {},
+                                                            "f:timeoutSeconds": {}
+                                                        },
+                                                        "f:resources": {},
+                                                        "f:terminationMessagePath": {},
+                                                        "f:terminationMessagePolicy": {}
+                                                    }
+                                                },
+                                                "f:dnsPolicy": {},
+                                                "f:restartPolicy": {},
+                                                "f:schedulerName": {},
+                                                "f:securityContext": {},
+                                                "f:terminationGracePeriodSeconds": {}
+                                            }
+                                        }
+                                    }
+                                },
+                                "manager": "pulumi-resource-kubernetes",
+                                "operation": "Update",
+                                "time": "2021-05-17T03:42:07Z"
+                            },
+                            {
+                                "apiVersion": "apps/v1",
+                                "fieldsType": "FieldsV1",
+                                "fieldsV1": {
+                                    "f:metadata": {
+                                        "f:annotations": {
+                                            "f:deployment.kubernetes.io/revision": {}
+                                        }
+                                    },
+                                    "f:status": {
+                                        "f:conditions": {
+                                            ".": {},
+                                            "k:{\"type\":\"Available\"}": {
+                                                ".": {},
+                                                "f:lastTransitionTime": {},
+                                                "f:lastUpdateTime": {},
+                                                "f:message": {},
+                                                "f:reason": {},
+                                                "f:status": {},
+                                                "f:type": {}
+                                            },
+                                            "k:{\"type\":\"Progressing\"}": {
+                                                ".": {},
+                                                "f:lastTransitionTime": {},
+                                                "f:lastUpdateTime": {},
+                                                "f:message": {},
+                                                "f:reason": {},
+                                                "f:status": {},
+                                                "f:type": {}
+                                            }
+                                        },
+                                        "f:observedGeneration": {},
+                                        "f:replicas": {},
+                                        "f:unavailableReplicas": {},
+                                        "f:updatedReplicas": {}
+                                    }
+                                },
+                                "manager": "kube-controller-manager",
+                                "operation": "Update",
+                                "time": "2021-05-17T03:52:08Z"
+                            }
+                        ],
+                        "name": "basket-api",
+                        "namespace": "eshop",
+                        "resourceVersion": "22214636",
+                        "selfLink": "/apis/apps/v1/namespaces/eshop/deployments/basket-api",
+                        "uid": "0ba19d2b-9e5e-43f1-b3fb-6c39314aee16"
+                    },
+                    "spec": {
+                        "progressDeadlineSeconds": 600,
+                        "replicas": 1,
+                        "revisionHistoryLimit": 10,
+                        "selector": {
+                            "matchLabels": {
+                                "app": "basket-api",
+                                "component": "server"
+                            }
+                        },
+                        "strategy": {
+                            "rollingUpdate": {
+                                "maxSurge": "25%",
+                                "maxUnavailable": "25%"
+                            },
+                            "type": "RollingUpdate"
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": {
+                                    "app": "basket-api",
+                                    "component": "server"
+                                }
+                            },
+                            "spec": {
+                                "containers": {
+                                    "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                                    "ciphertext": "AAABABlQGs9fClW/x0HuDZnfMXkAVybgWnfBRVOzV73+PT0Vh12N8vXHp0B/UdqVSq7Nit+1e66nz9zPgMRhhyB7pJq9wyDZHvgUjG5xRhkGvkYW1jSnimFDdgRwdTLwJJN8Mh/dYaYxwB2/6Op6NbJwrd2erHonvLiwiEFQHaV578XYSmce0JSfJWwHH7mFhlgWv+Wr1PixHdSGz/Wnl8+EPAqCPQfDYt4tGoUKFzkgz38W0dZxlm+FbQ243D3AMvf7kjS/sGvHWd+pMSmXnaY0ly3GxQUv/WHm2IIwWwIZ+/IrAoBDjrsteVHHEyFFPeCIVHjKjJHDkgIO7hUpEff6P3i/jYXCwhLrxRomIaHeg9nYN8Z9Np2z/PlEEhH8BomXwc4LrXDp/0Fli1xjk7qk1nJuRyHoltW3AkP17u0KVOL3aXmiC6bYrp91YtLChKoqAomjmi9abSHmaoR9WvQA7jKuntcaaaqDKoi6acbrusOHP/0iRypKKsepYPr9LSQwv/72E1FNazJiICOTo3k6djXpIHuI/9pi4YQuoME3PA+fQtiiqRizhTRYGMDEXvjeA+y7YY+9fLStCjagah0AXSTXdMq29UmOJwIFom7rXgXKTp+P2pooFf7bFG/6oBggAfcMjAgN4azos7mTzQ8GuCVeYZlZOqdeVFpVNMd7Sjdo/joNMRMzpxB/gmd4hd9mwTXde7a2VsYvb4EMNnGJ2y1mAtcdklEBI2WCXfpuSNOzeX+N2Cdqf8pd+KI2Sr8J1S1nZc9xKRqahQsuVVpCBevwP6jSo6YU6tVxagGFXWW0kq6R8J4ubxboGk80tzsAW2Z7lEBpc8abUbtjQ+GvelJy6e+c8dYIsh2CfBIqYniV/o1XoBPah/kr5QdJPi27GJX46w5ABpi+IOAby308AvM6I4Ot0evOPS5zAiADl9i7EWbK6HmtFshI2cfd8MXEo+6haGZ1GbnxU8yDpxPiap4N0+bAUbNJyx7YLw=="
+                                },
+                                "dnsPolicy": "ClusterFirst",
+                                "restartPolicy": "Always",
+                                "schedulerName": "default-scheduler",
+                                "securityContext": {},
+                                "terminationGracePeriodSeconds": 30
+                            }
+                        }
+                    },
+                    "status": {
+                        "conditions": [
+                            {
+                                "lastTransitionTime": "2021-05-17T03:42:07Z",
+                                "lastUpdateTime": "2021-05-17T03:42:07Z",
+                                "message": "Deployment does not have minimum availability.",
+                                "reason": "MinimumReplicasUnavailable",
+                                "status": "False",
+                                "type": "Available"
+                            },
+                            {
+                                "lastTransitionTime": "2021-05-17T03:52:08Z",
+                                "lastUpdateTime": "2021-05-17T03:52:08Z",
+                                "message": "ReplicaSet \"basket-api-76bd7c755f\" has timed out progressing.",
+                                "reason": "ProgressDeadlineExceeded",
+                                "status": "False",
+                                "type": "Progressing"
+                            }
+                        ],
+                        "observedGeneration": 1,
+                        "replicas": 1,
+                        "unavailableReplicas": 1,
+                        "updatedReplicas": 1
+                    }
+                },
+                "parent": "urn:pulumi:sandbox::basket-api::pulumi:pulumi:Stack::basket-api-sandbox",
+                "dependencies": [
+                    "urn:pulumi:sandbox::basket-api::kubernetes:core/v1:Secret::basket-api",
+                    "urn:pulumi:sandbox::basket-api::kubernetes:core/v1:ConfigMap::basket-api"
+                ],
+                "initErrors": [
+                    "resource eshop/basket-api was successfully created, but the Kubernetes API server reported that it failed to fully initialize or become live: 'basket-api' timed out waiting to be Ready",
+                    "[MinimumReplicasUnavailable] Deployment does not have minimum availability.",
+                    "[ProgressDeadlineExceeded] ReplicaSet \"basket-api-76bd7c755f\" has timed out progressing.",
+                    "Minimum number of live Pods was not attained",
+                    "[Pod eshop/basket-api-76bd7c755f-c74kt]: containers with unready status: [basket-api] -- [ImagePullBackOff] Back-off pulling image \"ghcr.io/suraciii/basket-api:linux-build.2\""
+                ],
+                "provider": "urn:pulumi:sandbox::basket-api::pulumi:providers:kubernetes::default_3_1_1::e998b273-4dc6-42cc-89d7-5bdb63da67de",
+                "propertyDependencies": {
+                    "apiVersion": null,
+                    "kind": null,
+                    "metadata": null,
+                    "spec": [
+                        "urn:pulumi:sandbox::basket-api::kubernetes:core/v1:Secret::basket-api",
+                        "urn:pulumi:sandbox::basket-api::kubernetes:core/v1:ConfigMap::basket-api"
+                    ]
+                },
+                "aliases": [
+                    "urn:pulumi:sandbox::basket-api::kubernetes:apps/v1beta1:Deployment::basket-api",
+                    "urn:pulumi:sandbox::basket-api::kubernetes:apps/v1beta2:Deployment::basket-api",
+                    "urn:pulumi:sandbox::basket-api::kubernetes:extensions/v1beta1:Deployment::basket-api"
+                ]
+            }
+        ],
+        "pending_operations": [
+        ]
+    }
+}

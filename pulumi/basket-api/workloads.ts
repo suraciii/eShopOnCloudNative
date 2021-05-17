@@ -27,7 +27,10 @@ function deploy_secret() {
         },
         type: "Opaque",
         stringData: {
-            "foo": "bar"
+            "ConnectionString": config.requireSecret("ConnectionString"),
+            "EventBusConnection": config.requireSecret("EventBusConnection"),
+            "EventBusUserName": config.requireSecret("EventBusUserName"),
+            "EventBusPassword": config.requireSecret("EventBusPassword"),
         }
     });
     return secret;
@@ -40,17 +43,7 @@ function deploy_configmap() {
             name: app_name
         },
         data: {
-            "urls__basket": "http://basket-api.eshop.svc.cluster.local",
-            "urls__catalog": "http://localhost:5555",
-            "urls__orders": "http://localhost:5555",
-            "urls__identity": "http://identity-api.eshop.svc.cluster.local",
-            "urls__grpcCatalog": "http://localhost:5555",
-            "urls__grpcOrdering": "http://localhost:5555",
-            "CatalogUrlHC": "http://localhost:5555/hc",
-            "OrderingUrlHC": "http://localhost:5555/hc",
-            "BasketUrlHC": "http://localhost:5555/hc",
-            "IdentityUrlHC": "http://identity-api.eshop.svc.cluster.local/hc",
-            "PaymentUrlHC": "http://localhost:5555/hc",
+            "IdentityUrl": "http://identity-api.eshop.svc.cluster.local",
         }
     });
     return configmap;

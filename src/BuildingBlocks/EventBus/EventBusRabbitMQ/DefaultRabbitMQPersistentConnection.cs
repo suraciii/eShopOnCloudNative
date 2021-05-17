@@ -65,6 +65,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
         public bool TryConnect()
         {
             _logger.LogInformation("RabbitMQ Client is trying to connect");
+            _logger.LogInformation($"UserName: {_connectionFactory.UserName}");
 
             lock (sync_root)
             {
