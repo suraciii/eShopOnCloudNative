@@ -1,4 +1,4 @@
-name: identity-api
+name: identity-ci
 
 on:
   push:
@@ -7,16 +7,19 @@ on:
     paths:
     - src/BuildingBlocks/**
     - src/Services/Identity/**
-    - .github/workflows/identity-api-ci.yml
-    - pulumi/identity-api/**
+    - .github/workflows/identity-ci.yml
+    - pulumi/identity/**
 env:
-  SERVICE: identity-api
-  IMAGE: identity.api
+  SERVICE: identity
 
 jobs:
   PublishImage:
     name: Build & Push Container Image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - APP: identity-api
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -30,15 +33,15 @@ jobs:
         registry: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
+    - name: Compose build ${{ matrix.APP }}
+      run: sudo -E docker-compose build ${{ matrix.APP }}
       working-directory: ./src
       shell: bash
       env:
         TAG: build.${{ github.run_number }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-    - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker-compose push ${{ env.SERVICE }}
+    - name: Compose push ${{ matrix.APP }}
+      run: sudo -E docker-compose push ${{ matrix.APP }}
       working-directory: ./src
       shell: bash
       env:
@@ -59,7 +62,7 @@ jobs:
       run: |
         cd prometheus-operator-crds
         npm install
-        cd ../identity-api
+        cd ../${{env.SERVICE}}
         npm install
       working-directory: ./pulumi
     - name: Pulumi up
@@ -67,7 +70,7 @@ jobs:
         echo "${{secrets.KUBECONFIG}}" > .kubeconfig
         pulumi stack select sandbox
         pulumi up --yes --skip-preview --suppress-permalink="true"
-      working-directory: ./pulumi/identity-api
+      working-directory: ./pulumi/${{env.SERVICE}}
       env:
         PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
         KUBECONFIG: .kubeconfig

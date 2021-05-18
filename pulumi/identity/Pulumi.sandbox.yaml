@@ -1,0 +1,5 @@
+config:
+  identity:ConnectionString:
+    secure: AAABAJ7+GzSMlaWYcprxQK1k61DgUIEpxIdTrXBXay/XHi51WipjkktxSHkAPTI+9QVafExrSW0IXL6nquUvWCIUt5cfCLrNTIvNbjOLUbbBTE/IOO7ChBWYXsyBbhRmMu5jWaq2NPNqQmMaQfSaMUHNibU=
+  identity:DPConnectionString:
+    secure: AAABALcS1jgy0mkaA71tavgAqnju/iONtq9LygFNFXzHZmciBGcORgmDePP4hEYDaRmGVLFADoTVtsW91XUG4/9DS4ztIMK35uChsv1IyeJVWqVH03w=
