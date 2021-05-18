@@ -1,0 +1,9 @@
+config:
+  basket-api:ConnectionString:
+    secure: AAABALvmOiyDeCImUx7s3C+KzNr/xNLCIrQ3aF++5ncyQNAH9j2aGtOUY2cRABRHS/8cgrsV5QkyoM3JkGrfWsEHQC2Rgi059MGd23GQWLjFCA0RAbg=
+  basket-api:EventBusConnection:
+    secure: AAABANGfex/5Ej2sCInHs9hEwjmCWGPHSYcGy07WQwpK4l0Gfkq9Nx1AmpkMS+5vJcv+q+4mEbL9V61gkj5Oyg==
+  basket-api:EventBusPassword:
+    secure: AAABAFwpNyudxLEmipMPQ29OOyWVZaRW6BbHJgRp/Dig8N5ajXyRpQ==
+  basket-api:EventBusUserName:
+    secure: AAABAB1679pP+2hsnlb9uPm747/s3UA3LyZWB4PuuTd3L0FK

@@ -1,4 +1,4 @@
-name: basket-api
+name: basket-ci
 
 on:
   push:
@@ -7,34 +7,22 @@ on:
     paths:
     - src/BuildingBlocks/**
     - src/Services/Basket/**
-    - .github/workflows/basket-api.yml
-    - pulumi/basket-api/**
+    - .github/workflows/basket-ci.yml
+    - pulumi/basket/**
 env:
-  SERVICE: basket-api
-  IMAGE: basket.api
-  DOTNET_VERSION: 5.0.x
+  SERVICE: basket
 
 jobs:
   PublishImage:
     name: Build & Push Container Image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - APP: basket-api
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    # - name: Setup dotnet
-    #   uses: actions/setup-dotnet@v1
-    #   with:
-    #     dotnet-version: ${{ env.DOTNET_VERSION }}
-    # - name: Build and run unit tests
-    #   run: |
-    #     cd src
-    #     dotnet restore "eShopOnContainers-ServicesAndWebApps.sln"
-    #     cd Services/Basket/Basket.API
-    #     dotnet build --no-restore
-    #     cd -
-    #     cd Services/Basket/Basket.UnitTests
-    #     dotnet build --no-restore
-    #     dotnet test --no-build -v=normal
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
     - name: Set up Docker Buildx
@@ -45,15 +33,15 @@ jobs:
         registry: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
+    - name: Compose build ${{ matrix.APP }}
+      run: sudo -E docker-compose build ${{ matrix.APP }}
       working-directory: ./src
       shell: bash
       env:
         TAG: build.${{ github.run_number }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-    - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker-compose push ${{ env.SERVICE }}
+    - name: Compose push ${{ matrix.APP }}
+      run: sudo -E docker-compose push ${{ matrix.APP }}
       working-directory: ./src
       shell: bash
       env:

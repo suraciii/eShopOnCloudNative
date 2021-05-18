@@ -1,21 +1,12 @@
-import * as k8s from "@pulumi/kubernetes";
 import { Service } from "@pulumi/kubernetes/core/v1";
-import { team_name, app_name, service_name } from "./core";
 import { ServiceMonitor } from "@pulumi/prometheus-operator-crds/monitoring/v1";
 
-export function deploy(service: Service) {
-    return deploy_service_monitor(service);
-}
-
-function deploy_service_monitor(service: Service) {
-    return new ServiceMonitor(service_name, {
+export function deploy(name: string, service: Service) {
+    return new ServiceMonitor(name, {
         metadata: {
-            name: service_name,
+            name: service.metadata.name,
             namespace: service.metadata.namespace,
-            labels: {
-                app: app_name,
-                team: team_name
-            }
+            labels: service.metadata.labels
         },
         spec: {
             selector: {
@@ -27,5 +18,5 @@ function deploy_service_monitor(service: Service) {
                 interval: "5s"
             }]
         }
-    })
+    });
 }
