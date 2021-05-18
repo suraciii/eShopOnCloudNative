@@ -1,4 +1,4 @@
-name: ordering-api
+name: ordering-ci
 
 on:
   push:
@@ -7,10 +7,10 @@ on:
     paths:
       - src/BuildingBlocks/**
       - src/Services/Ordering/**
-      - .github/workflows/ordering-api-ci.yml
-      - pulumi/ordering-api/**
+      - .github/workflows/ordering-ci.yml
+      - pulumi/ordering/**
 env:
-  DOTNET_VERSION: 5.0.x
+  SERVICE: ordering
 
 jobs:
   PublishImage:
@@ -19,9 +19,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - SERVICE: ordering-api
-          - SERVICE: ordering-backgroundtasks
-          - SERVICE: ordering-signalrhub
+          - APP: ordering-api
+          - APP: ordering-backgroundtasks
+          - APP: ordering-signalrhub
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,15 +35,15 @@ jobs:
           registry: ${{ secrets.REGISTRY_ENDPOINT }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-      - name: Compose build ${{ matrix.SERVICE }}
-        run: sudo -E docker-compose build ${{ matrix.SERVICE }}
+      - name: Compose build ${{ matrix.APP }}
+        run: sudo -E docker-compose build ${{ matrix.APP }}
         working-directory: ./src
         shell: bash
         env:
           TAG: build.${{ github.run_number }}
           REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-      - name: Compose push ${{ matrix.SERVICE }}
-        run: sudo -E docker-compose push ${{ matrix.SERVICE }}
+      - name: Compose push ${{ matrix.APP }}
+        run: sudo -E docker-compose push ${{ matrix.APP }}
         working-directory: ./src
         shell: bash
         env:
@@ -64,7 +64,7 @@ jobs:
         run: |
           cd prometheus-operator-crds
           npm install
-          cd ../ordering-api
+          cd ../${{ env.SERVICE }}
           npm install
         working-directory: ./pulumi
       - name: Pulumi up
@@ -72,7 +72,7 @@ jobs:
           echo "${{secrets.KUBECONFIG}}" > .kubeconfig
           pulumi stack select sandbox
           pulumi up --yes --skip-preview --suppress-permalink="true"
-        working-directory: ./pulumi/ordering-api
+        working-directory: ./pulumi/${{ env.SERVICE }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           KUBECONFIG: .kubeconfig

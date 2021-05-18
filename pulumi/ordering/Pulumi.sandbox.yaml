@@ -1,0 +1,11 @@
+config:
+  ordering:ConnectionString:
+    secure: AAABAFEHdXytX6eLMFLoOCB/Kkqr0gKKuSvk2U0UcM6qFBDKs0OU3yqnmXCgTdodJzRSZpGGS8ZDatqK81ZmeMFHSgA8/2w6D3rx2lIqRF9ify7VV7YbAyrm8Z9BMWWK8QELmDkPvIQVvUkqXRMpUTM8juo=
+  ordering:EventBusConnection:
+    secure: AAABAKDPzWVjDN7tgwYIr/ArCz37O/jXByK+dDiLjmHyPviC2dvhjcCSDpRBoghel7zcYB2CW3miHQ2dD4gV4A==
+  ordering:EventBusPassword:
+    secure: AAABAPZjcRUg95rMVPYmBH1pB49vLmsKW3YBNPVfVAzRUWFvNhXb3Q==
+  ordering:EventBusUserName:
+    secure: AAABANgNokDsAbYKBcS85xb9hpwS+pIx/uKGP/oKppacEpzf
+  ordering:SignalrStoreConnectionString:
+    secure: AAABAAj8ykcj8nyALrgnprc+f5ImDoFmSyBqliofBNZfAeSCWLAb989fhGPUUaTVMmN1zWM9aX5WM0bh6oH/J/kIigF1FcsyB3CYVky7BoFS5eQUo6c=
