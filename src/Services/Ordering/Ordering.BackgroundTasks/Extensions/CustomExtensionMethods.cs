@@ -36,8 +36,24 @@ namespace Ordering.BackgroundTasks.Extensions
             }
             else
             {
-                hcBuilder.AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
+                hcBuilder
+                    .AddRabbitMQ(
+                        _ => factory,
                         name: "orderingtask-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

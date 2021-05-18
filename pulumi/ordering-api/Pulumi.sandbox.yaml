@@ -1,0 +1,11 @@
+config:
+  ordering-api:ConnectionString:
+    secure: AAABAPgIgT8AK0GFAYC3cPIq+tHoGaRUwk2CcWXtUqoZh2Y/caSMLoyG5A1ZYd+e147qGKjw/8xPo+uiqeh4kP2Ng+CK+xVTajaesPOWdXGHb6HAzhxzCyzQoBn0a5BLk8h5KuZR6/s1liDb9OqG7F2Q1bw=
+  ordering-api:EventBusConnection:
+    secure: AAABAGcxOmdTWBNb8ZeGBA3VkjTxNx7k3wl4QmhwukTll4Gop8UFe1rnxtLQSuTlRto9vwR5g65b/9u8S/z3+g==
+  ordering-api:EventBusPassword:
+    secure: AAABAKNPG/MIBwsRQDqh0o4eXxrPAKY+Cqj0N/lpjfEB/E2bwS3Q1Q==
+  ordering-api:EventBusUserName:
+    secure: AAABADPdc+RM5sPNIAIIRU37s2YIYvDKrKidU+tyvq0907TO
+  ordering-api:SignalrStoreConnectionString:
+    secure: AAABAGnPSsKEzDCB8dmLdb5zAwTnJoLVvBbXvjo9WulKCGa+wslBywQzPFoMkhxltCIMo4oaOG2ZPjZi0Y2MhfB0qLu7V/3d3AaBsWrvMj5iOE7U/2w=

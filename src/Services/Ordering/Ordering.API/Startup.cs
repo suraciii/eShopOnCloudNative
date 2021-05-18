@@ -1,5 +1,11 @@
 ﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Common;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.IO;
+    using System.Reflection;
     using AspNetCore.Http;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
@@ -31,12 +37,6 @@
     using Microsoft.OpenApi.Models;
     using Ordering.Infrastructure;
     using RabbitMQ.Client;
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Common;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.IO;
-    using System.Reflection;
 
     public class Startup
     {
@@ -211,9 +211,24 @@
             }
             else
             {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
                 hcBuilder
                     .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
+                        _ => factory,
                         name: "ordering-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

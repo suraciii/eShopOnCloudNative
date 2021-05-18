@@ -1,4 +1,7 @@
-﻿using Autofac;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,9 +21,6 @@ using Ordering.SignalrHub.IntegrationEvents;
 using Ordering.SignalrHub.IntegrationEvents.EventHandling;
 using Ordering.SignalrHub.IntegrationEvents.Events;
 using RabbitMQ.Client;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
 
 namespace Ordering.SignalrHub
 {
@@ -261,9 +261,24 @@ namespace Ordering.SignalrHub
             }
             else
             {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
                 hcBuilder
                     .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
+                        _ => factory,
                         name: "signalr-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

@@ -42,13 +42,13 @@ function deploy_configmap() {
         data: {
             "urls__basket": "http://basket-api.eshop.svc.cluster.local",
             "urls__catalog": "http://catalog-api.eshop.svc.cluster.local",
-            "urls__orders": "http://localhost:5555",
+            "urls__orders": "http://ordering-api.eshop.svc.cluster.local",
             "urls__identity": "http://identity-api.eshop.svc.cluster.local",
             "urls__grpcCatalog": "http://localhost:5555",
             "urls__grpcOrdering": "http://localhost:5555",
-            "CatalogUrlHC": "http://localhost:5555/hc",
-            "OrderingUrlHC": "http://localhost:5555/hc",
-            "BasketUrlHC": "http://localhost:5555/hc",
+            "CatalogUrlHC": "http://catalog-api.eshop.svc.cluster.local/hc",
+            "OrderingUrlHC": "http://ordering-api.eshop.svc.cluster.local/hc",
+            "BasketUrlHC": "http://basket-api.eshop.svc.cluster.local/hc",
             "IdentityUrlHC": "http://identity-api.eshop.svc.cluster.local/hc",
             "PaymentUrlHC": "http://localhost:5555/hc",
         }
