@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -15,7 +16,6 @@ using Microsoft.Extensions.Logging;
 using Payment.API.IntegrationEvents.EventHandling;
 using Payment.API.IntegrationEvents.Events;
 using RabbitMQ.Client;
-using System;
 
 namespace Payment.API
 {
@@ -185,9 +185,24 @@ namespace Payment.API
             }
             else
             {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
                 hcBuilder
                     .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
+                        _ => factory,
                         name: "payment-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

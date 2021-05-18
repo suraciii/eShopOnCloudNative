@@ -1,0 +1,7 @@
+config:
+  payment:EventBusConnection:
+    secure: AAABACY2z5tkWEQp8WkGpx49MqCgoPDg+9lJE/MaI6o5kTx+hbT+hD17J9/LyZ9S2AVej3kxA2te8FuUcJmPVw==
+  payment:EventBusPassword:
+    secure: AAABAOoFbFRs39rk2OyhGUUV6zXv52KTi/qaEnkJqXV4ZaOwFHNPUQ==
+  payment:EventBusUserName:
+    secure: AAABAIj7ynbBKT/5Ij1FMua739DA5hBTP+Fw+OEp7vha4EbL
