@@ -1,0 +1,9 @@
+config:
+  catalog:ConnectionString:
+    secure: AAABAIgNaikEFfEewLvC9wIz2MZWwxQtgE+f60RSCJ80fq5jvTRtuewM16/FJLwrhQPzDjShRTDEGBll5vy6xQZuIN1xCBXabypo/cZ8m+5H9+14PsFoyeJn9nsl/JnU1mZixOZCB/HaSHMI82hfc0nUXg==
+  catalog:EventBusConnection:
+    secure: AAABAG5t5qBDBIY/7eirNdgeHEsB34gitkB9Uk+rvE2EH0CGRBd+r9Xcsm8jYEHE/1SGFeJLbP8386wzYxAC1A==
+  catalog:EventBusPassword:
+    secure: AAABAOdTPs1HJI3xV0QP10UZg12e9T2ZRqOVq29ctPEfJyq/w3ujfw==
+  catalog:EventBusUserName:
+    secure: AAABAKBIqRSLA94vJMSYlLBp5tEOdURdEjMm/26QmGfkJKeO

@@ -1,9 +1,0 @@
-config:
-  catalog-api:ConnectionString:
-    secure: AAABAKgSk8KsEWStKZKL6JFgxhcg6TnpWRQcvGxa9Xt/pJziyHIyYlEKr9VPhDaICftXsc8rLTH7ZAH/OuKaw3cmDSMD82eHeCVoZcKmmhsrqVGI8YlVRKrv/x35llDqWKHNGEPZ8AUVQn9vY+PmqIubGSzPGOY=
-  catalog-api:EventBusConnection:
-    secure: AAABAHk3GDsWhPIrMQQUL4FrCCmM7b1cwZnl39v3vpcLRf047wt41v9mDbpFP8N0HO+9uxhVgw4EiZgOrDRnNA==
-  catalog-api:EventBusPassword:
-    secure: AAABALOOXnsNTzZ+P7JA6tNuR98Yys9aqovSPXffZ8MQT9Lf1Q3+9Q==
-  catalog-api:EventBusUserName:
-    secure: AAABADp2WPSkeQh+XDboGGS7p973SCEErrYdBIQCVpoFZGmk

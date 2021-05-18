@@ -20,7 +20,8 @@ function deploy_secret() {
     const secret = new Secret(service_name, {
         metadata: {
             namespace: namespace_name,
-            name: service_name
+            name: service_name,
+            labels: shared_labels
         },
         type: "Opaque",
         stringData: {
@@ -37,7 +38,8 @@ function deploy_configmap() {
     const configmap = new ConfigMap(service_name, {
         metadata: {
             namespace: namespace_name,
-            name: service_name
+            name: service_name,
+            labels: shared_labels
         },
         data: {
             "IdentityUrl": "http://identity-api.eshop.svc.cluster.local",

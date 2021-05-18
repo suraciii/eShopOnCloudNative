@@ -368,7 +368,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
                 hcBuilder
                     .AddRabbitMQ(
-                        (s) => factory,
+                        _ => factory,
                         name: "basket-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }

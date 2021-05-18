@@ -1,4 +1,4 @@
-name: catalog-api
+name: catalog-ci
 
 on:
   push:
@@ -7,17 +7,19 @@ on:
     paths:
     - src/BuildingBlocks/**
     - src/Services/Catalog/**
-    - .github/workflows/catalog-api.yml
-    - pulumi/catalog-api/**
+    - .github/workflows/catalog-ci.yml
+    - pulumi/catalog/**
 env:
-  SERVICE: catalog-api
-  IMAGE: catalog.api
-  DOTNET_VERSION: 5.0.x
+  SERVICE: catalog
 
 jobs:
   PublishImage:
     name: Build & Push Container Image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - APP: catalog-api
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -31,15 +33,15 @@ jobs:
         registry: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
+    - name: Compose build ${{ matrix.APP }}
+      run: sudo -E docker-compose build ${{ matrix.APP }}
       working-directory: ./src
       shell: bash
       env:
         TAG: build.${{ github.run_number }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-    - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker-compose push ${{ env.SERVICE }}
+    - name: Compose push ${{ matrix.APP }}
+      run: sudo -E docker-compose push ${{ matrix.APP }}
       working-directory: ./src
       shell: bash
       env:
