@@ -69,13 +69,13 @@ function deploy_app(configmap: ConfigMap) {
                         livenessProbe: {
                             httpGet: {
                                 path: "/ready",
-                                port: 80
+                                port: 8001
                             }
                         },
                         readinessProbe: {
                             httpGet: {
                                 path: "/ready",
-                                port: 80
+                                port: 8001
                             }
                         },
                         volumeMounts: [{
