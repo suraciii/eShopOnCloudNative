@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { ConfigMap, Secret, Service, ServiceSpecType } from "@pulumi/kubernetes/core/v1";
-import { service_name, app_name, image_repo, namespace_name, team_name, app_host, shared_labels } from "./core";
+import { service_name, app_name, image_repo, namespace_name, shared_labels } from "./core";
 import { Deployment } from "@pulumi/kubernetes/apps/v1";
 import { Ingress } from "@pulumi/kubernetes/networking/v1beta1";
 
