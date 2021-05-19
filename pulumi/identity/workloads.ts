@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { ConfigMap, Secret, Service, ServiceSpecType } from "@pulumi/kubernetes/core/v1";
-import { service_name, app_host, namespace_name, spa_url, shared_labels, app_name_api, image_repo_api } from "./core";
+import { service_name, namespace_name, spa_url, shared_labels, app_name_api, image_repo_api, path_base, base_domain, team_name } from "./core";
 import { Job } from "@pulumi/kubernetes/batch/v1";
 import { Deployment } from "@pulumi/kubernetes/apps/v1";
 import { Ingress } from "@pulumi/kubernetes/networking/v1beta1";
@@ -178,18 +178,17 @@ function deploy_ingress(service: Service) {
             ingressClassName: "nginx",
             tls: [
                 {
-                    hosts: [app_host],
-                    secretName: `${service_name}-tls-secret`
+                    hosts: [base_domain],
+                    secretName: `${team_name}-tls-secret`
                 }
             ],
             rules: [
                 {
-                    host: app_host,
+                    host: base_domain,
                     http: {
                         paths: [
                             {
-                                path: "/",
-                                pathType: "Prefix",
+                                path: path_base,
                                 backend: {
                                     serviceName: service.metadata.name,
                                     servicePort: "http"

@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ServiceSpecType } from "@pulumi/kubernetes/core/v1";
 import * as kx from "@pulumi/kubernetesx";
-import { app_host, app_name, base_domain, image_repo, namespace_name, team_name } from "./core";
+import { app_name, base_domain, image_repo, namespace_name, team_name } from "./core";
 
 const config = new pulumi.Config();
 
@@ -122,18 +122,17 @@ function deploy_ingress(service: k8s.core.v1.Service) {
             ingressClassName: "nginx",
             tls: [
                 {
-                    hosts: [app_host],
-                    secretName: `${app_name}-tls-secret`
+                    hosts: [base_domain],
+                    secretName: `${team_name}-tls-secret`
                 }
             ],
             rules: [
                 {
-                    host: app_host,
+                    host: base_domain,
                     http: {
                         paths: [
                             {
                                 path: "/",
-                                pathType: "Prefix",
                                 backend: {
                                     serviceName: service.metadata.name,
                                     servicePort: "http"

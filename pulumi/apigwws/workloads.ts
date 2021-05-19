@@ -1,7 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as fs from 'fs';
 import { ServiceSpecType, Service, ConfigMap } from "@pulumi/kubernetes/core/v1";
-import { app_host, app_name, namespace_name, shared_labels, team_name } from "./core";
+import { base_domain, app_name, namespace_name, shared_labels, team_name, path_base } from "./core";
 import { Deployment } from "@pulumi/kubernetes/apps/v1";
 import { Ingress } from "@pulumi/kubernetes/networking/v1beta1";
 
@@ -128,18 +128,17 @@ function deploy_ingress(service: Service) {
             ingressClassName: "nginx",
             tls: [
                 {
-                    hosts: [app_host],
-                    secretName: `${app_name}-tls-secret`
+                    hosts: [base_domain],
+                    secretName: `${team_name}-tls-secret`
                 }
             ],
             rules: [
                 {
-                    host: app_host,
+                    host: base_domain,
                     http: {
                         paths: [
                             {
-                                path: "/webshoppingapigw",
-                                pathType: "Prefix",
+                                path: path_base,
                                 backend: {
                                     serviceName: service.metadata.name,
                                     servicePort: "http"

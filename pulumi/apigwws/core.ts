@@ -4,7 +4,7 @@ export const namespace_name = "eshop";
 
 export const app_name = "apigwws";
 export const base_domain = "eshop.ichnb.com";
-export const app_host = base_domain;
+export const path_base = "/webshoppingapigw";
 
 export const shared_labels = {
     team: team_name,
