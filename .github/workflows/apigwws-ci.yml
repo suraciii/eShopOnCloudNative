@@ -1,0 +1,40 @@
+name: apigwws-ci
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - .github/workflows/apigwws-ci.yml
+    - pulumi/apigwws/**
+env:
+  SERVICE: apigwws
+
+jobs:
+  deploy:
+    name: Deploy
+    needs: PublishImage
+    runs-on: ubuntu-latest
+    environment: sandbox
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Install Pulumi CLI
+      uses: pulumi/action-install-pulumi-cli@v1.0.1
+    - name: Npm Install
+      run: |
+        cd prometheus-operator-crds
+        npm install
+        cd ../${{ env.SERVICE }}
+        npm install
+      working-directory: ./pulumi
+    - name: Pulumi up
+      run: |
+        echo "${{secrets.KUBECONFIG}}" > .kubeconfig
+        pulumi stack select sandbox
+        pulumi up --yes --skip-preview --suppress-permalink="true"
+      working-directory: ./pulumi/${{ env.SERVICE }}
+      env:
+        PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        KUBECONFIG: .kubeconfig
