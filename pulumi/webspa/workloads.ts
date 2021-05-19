@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import { ServiceSpecType } from "@pulumi/kubernetes/core/v1";
 import * as kx from "@pulumi/kubernetesx";
-import { app_host, app_name, image_repo, namespace_name, team_name } from "./core";
+import { app_host, app_name, base_domain, image_repo, namespace_name, team_name } from "./core";
 
 const config = new pulumi.Config();
 
@@ -41,6 +41,7 @@ function deploy_configmap() {
         data: {
             "IdentityUrlHC": "http://identity-api.eshop.svc.cluster.local/hc",
             "IdentityUrl": "https://identity-api.eshop.ichnb.com",
+            "PurchaseUrl": `https://agg.${base_domain}`,
             "CallBackUrl": `https://${app_host}/`
         }
     });

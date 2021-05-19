@@ -1,7 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { ConfigMap, Secret, Service, ServiceSpecType } from "@pulumi/kubernetes/core/v1";
-import { service_name, app_name, image_repo, namespace_name, team_name } from "./core";
-import { Job } from "@pulumi/kubernetes/batch/v1";
+import { service_name, app_name, image_repo, namespace_name, team_name, app_host, shared_labels } from "./core";
 import { Deployment } from "@pulumi/kubernetes/apps/v1";
 import { Ingress } from "@pulumi/kubernetes/networking/v1beta1";
 
@@ -15,15 +14,17 @@ export function deploy() {
     const configmap = deploy_configmap();
     const deployment = deploy_deployment(configmap, secret);
     const service = deploy_service(deployment)
-    return { deployment, service }
+    const ingress = deploy_ingress(service)
+    return { deployment, service, ingress }
 }
 
 
 function deploy_secret() {
-    const secret = new Secret(app_name, {
+    const secret = new Secret(service_name, {
         metadata: {
             namespace: namespace_name,
-            name: app_name
+            name: service_name,
+            labels: shared_labels
         },
         type: "Opaque",
         stringData: {
@@ -34,10 +35,11 @@ function deploy_secret() {
 }
 
 function deploy_configmap() {
-    const configmap = new ConfigMap(app_name, {
+    const configmap = new ConfigMap(service_name, {
         metadata: {
             namespace: namespace_name,
-            name: app_name
+            name: service_name,
+            labels: shared_labels
         },
         data: {
             "urls__basket": "http://basket-api.eshop.svc.cluster.local",
@@ -59,7 +61,7 @@ function deploy_configmap() {
 function deploy_deployment(configmap: ConfigMap, secret: Secret) {
     const labels = {
         app: app_name,
-        component: "server"
+        ...shared_labels
     };
     const deployment = new Deployment(app_name, {
         metadata: {
@@ -116,7 +118,7 @@ function deploy_service(deployment: Deployment) {
             namespace: namespace_name,
             labels: {
                 app: app_name,
-                team: team_name
+                ...shared_labels
             }
         },
         spec: {
@@ -127,3 +129,41 @@ function deploy_service(deployment: Deployment) {
     });
 }
 
+function deploy_ingress(service: Service) {
+    return new Ingress(app_name, {
+        metadata: {
+            name: app_name,
+            namespace: namespace_name,
+            labels: shared_labels,
+            annotations: {
+                "cert-manager.io/cluster-issuer": "letsencrypt"
+            }
+        },
+        spec: {
+            ingressClassName: "nginx",
+            tls: [
+                {
+                    hosts: [app_host],
+                    secretName: `${app_name}-tls-secret`
+                }
+            ],
+            rules: [
+                {
+                    host: app_host,
+                    http: {
+                        paths: [
+                            {
+                                path: "/",
+                                pathType: "Prefix",
+                                backend: {
+                                    serviceName: service.metadata.name,
+                                    servicePort: "http"
+                                }
+                            },
+                        ],
+                    },
+                }
+            ]
+        }
+    });
+}

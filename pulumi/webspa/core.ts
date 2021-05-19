@@ -2,6 +2,7 @@
 export const team_name = "eshop";
 export const namespace_name = "eshop";
 export const image_registry = "ghcr.io/suraciii";
+
 export const app_name = "webspa";
 export const base_domain = "eshop.ichnb.com";
 export const app_host = `${base_domain}`;
