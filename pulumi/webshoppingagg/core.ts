@@ -12,5 +12,3 @@ export const shared_labels = {
 export const app_name = service_name;
 export const image_name = service_name;
 export const image_repo = `${image_registry}/${image_name}`;
-export const base_domain = "eshop.ichnb.com";
-export const app_host = `agg.${base_domain}`;

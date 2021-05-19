@@ -138,7 +138,7 @@ function deploy_ingress(service: Service) {
                     http: {
                         paths: [
                             {
-                                path: "/",
+                                path: "/webshoppingapigw",
                                 pathType: "Prefix",
                                 backend: {
                                     serviceName: service.metadata.name,

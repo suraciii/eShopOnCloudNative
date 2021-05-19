@@ -14,8 +14,7 @@ export function deploy() {
     const configmap = deploy_configmap();
     const deployment = deploy_deployment(configmap, secret);
     const service = deploy_service(deployment)
-    const ingress = deploy_ingress(service)
-    return { deployment, service, ingress }
+    return { deployment, service }
 }
 
 
@@ -125,45 +124,6 @@ function deploy_service(deployment: Deployment) {
             ports: [{ name: "http", port: 80 }],
             selector: deployment.spec.template.metadata.labels,
             type: ServiceSpecType.ClusterIP
-        }
-    });
-}
-
-function deploy_ingress(service: Service) {
-    return new Ingress(app_name, {
-        metadata: {
-            name: app_name,
-            namespace: namespace_name,
-            labels: shared_labels,
-            annotations: {
-                "cert-manager.io/cluster-issuer": "letsencrypt"
-            }
-        },
-        spec: {
-            ingressClassName: "nginx",
-            tls: [
-                {
-                    hosts: [app_host],
-                    secretName: `${app_name}-tls-secret`
-                }
-            ],
-            rules: [
-                {
-                    host: app_host,
-                    http: {
-                        paths: [
-                            {
-                                path: "/",
-                                pathType: "Prefix",
-                                backend: {
-                                    serviceName: service.metadata.name,
-                                    servicePort: "http"
-                                }
-                            },
-                        ],
-                    },
-                }
-            ]
         }
     });
 }
