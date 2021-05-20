@@ -40,7 +40,7 @@ function deploy_configmap() {
         },
         data: {
             "IdentityUrlHC": "http://identity-api.eshop.svc.cluster.local/hc",
-            "IdentityUrl": "https://identity-api.eshop.ichnb.com",
+            "IdentityUrl": "https://eshop.ichnb.com/identity",
             "PurchaseUrl": `https://apigwws.${base_domain}`,
             "CallBackUrl": `https://${base_domain}/`
         }
