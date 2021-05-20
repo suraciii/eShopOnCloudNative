@@ -1,4 +1,3 @@
-
 export const team_name = "eshop";
 export const namespace_name = "eshop";
 export const image_registry = "ghcr.io/suraciii";

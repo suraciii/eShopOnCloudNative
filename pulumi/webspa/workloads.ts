@@ -68,6 +68,9 @@ function deploy_deployment(configmap: k8s.core.v1.ConfigMap, secret: k8s.core.v1
                 }
             },
             env: [{
+                name: "PATH_BASE",
+                value: "/"
+            }, {
                 name: "ASPNETCORE_ENVIRONMENT",
                 value: pulumi.getStack()
             }],

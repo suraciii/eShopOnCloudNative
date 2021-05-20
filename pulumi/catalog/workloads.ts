@@ -114,7 +114,13 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
                     containers: [{
                         name: app_name,
                         image: image_name,
-                        ports: [{ name: 'http', containerPort: 80 }],
+                        ports: [{
+                            name: 'http',
+                            containerPort: 80
+                        }, {
+                            name: 'grpc',
+                            containerPort: 81
+                        }],
                         livenessProbe: {
                             httpGet: {
                                 path: "/liveness",
@@ -128,6 +134,9 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
                             }
                         },
                         env: [{
+                            name: "PATH_BASE",
+                            value: "/catalog-api",
+                        }, {
                             name: "ASPNETCORE_ENVIRONMENT",
                             value: pulumi.getStack()
                         }],
@@ -152,7 +161,13 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
             }
         },
         spec: {
-            ports: [{ name: "http", port: 80 }],
+            ports: [{
+                name: "http",
+                port: 80
+            }, {
+                name: "grpc",
+                port: 81
+            }],
             selector: deployment.spec.template.metadata.labels,
             type: ServiceSpecType.ClusterIP
         }

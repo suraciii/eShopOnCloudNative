@@ -1,7 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { ConfigMap, Secret, Service, ServiceSpecType } from "@pulumi/kubernetes/core/v1";
 import { service_name, app_name_api, image_repo_api, namespace_name, shared_labels } from "./core";
-import { Job } from "@pulumi/kubernetes/batch/v1";
 import { Deployment } from "@pulumi/kubernetes/apps/v1";
 
 const config = new pulumi.Config();
@@ -85,6 +84,9 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
                             }
                         },
                         env: [{
+                            name: "PATH_BASE",
+                            value: "/payment-api"
+                        }, {
                             name: "ASPNETCORE_ENVIRONMENT",
                             value: pulumi.getStack()
                         }],

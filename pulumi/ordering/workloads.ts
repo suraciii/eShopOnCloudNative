@@ -4,6 +4,13 @@ import { service_name, app_name_api, image_repo_api, namespace_name, team_name, 
 import { Job } from "@pulumi/kubernetes/batch/v1";
 import { Deployment } from "@pulumi/kubernetes/apps/v1";
 
+function toContainerPorts(ports: { [key: string]: number }) {
+    return Object.keys(ports).map(key => ({ name: key, containerPort: ports[key] }));
+}
+function toServicePorts(ports: { [key: string]: number }) {
+    return Object.keys(ports).map(key => ({ name: key, port: ports[key] }));
+}
+
 const config = new pulumi.Config();
 const image_version = process.env["IMAGE_VERSION"];
 if (!image_version) { throw "missing IMAGE_VERSION" };
@@ -15,9 +22,10 @@ export function deploy() {
     const secret = deploy_secret();
     const configmap = deploy_configmap();
     const job = deploy_migration_job(configmap, secret);
-    const { deployment: deployment_api, service: service_api } = deploy_app(app_name_api, image_api, configmap, secret, job);
-    const { deployment: deployment_bgt, service: service_bgt } = deploy_app(app_name_bgt, image_bgt, configmap, secret, job);
-    const { deployment: deployment_hub, service: service_hub } = deploy_app(app_name_hub, image_hub, configmap, secret, job);
+    const { deployment: deployment_api, service: service_api } =
+        deploy_app(app_name_api, image_api, configmap, secret, job, { "http": 80, "grpc": 81 }, "/ordering-api");
+    deploy_app(app_name_bgt, image_bgt, configmap, secret, job, { "http": 80 }, "/ordering-backgroundtasks");
+    deploy_app(app_name_hub, image_hub, configmap, secret, job, { "http": 80 }, "/ordering-signalrhub");
     return { deployment_api, service_api };
 }
 
@@ -95,7 +103,14 @@ function deploy_migration_job(configmap: ConfigMap, secret: Secret) {
     return job;
 }
 
-function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, secret: Secret, migration_job: Job) {
+function deploy_app(app_name: string,
+    image: string,
+    configmap: ConfigMap,
+    secret: Secret,
+    migration_job: Job,
+    ports: { [key: string]: number },
+    path_base: string
+) {
     const labels: { [key: string]: string } = {
         app: app_name,
         ...shared_labels
@@ -117,8 +132,8 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
                 spec: {
                     containers: [{
                         name: app_name,
-                        image: image_name,
-                        ports: [{ name: 'http', containerPort: 80 }],
+                        image: image,
+                        ports: toContainerPorts(ports),
                         livenessProbe: {
                             httpGet: {
                                 path: "/liveness",
@@ -132,6 +147,9 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
                             }
                         },
                         env: [{
+                            name: "PATH_BASE",
+                            value: path_base
+                        }, {
                             name: "ASPNETCORE_ENVIRONMENT",
                             value: pulumi.getStack()
                         }],
@@ -156,9 +174,8 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
             }
         },
         spec: {
-            ports: [{ name: "http", port: 80 }],
+            ports: toServicePorts(ports),
             selector: deployment.spec.template.metadata.labels,
-            type: ServiceSpecType.ClusterIP
         }
     });
 

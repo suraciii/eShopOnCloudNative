@@ -129,6 +129,9 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
                             }
                         },
                         env: [{
+                            name: "PATH_BASE",
+                            value: path_base,
+                        }, {
                             name: "ASPNETCORE_ENVIRONMENT",
                             value: pulumi.getStack()
                         }],

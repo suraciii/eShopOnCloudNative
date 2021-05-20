@@ -94,6 +94,9 @@ function deploy_deployment(configmap: ConfigMap, secret: Secret) {
                             }
                         },
                         env: [{
+                            name: "PATH_BASE",
+                            value: "/webshoppingagg"
+                        }, {
                             name: "ASPNETCORE_ENVIRONMENT",
                             value: pulumi.getStack()
                         }],
