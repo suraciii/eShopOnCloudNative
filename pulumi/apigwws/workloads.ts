@@ -120,8 +120,7 @@ function deploy_ingress(service: Service) {
             labels: shared_labels,
             annotations: {
                 "cert-manager.io/cluster-issuer": "letsencrypt",
-                "nginx.ingress.kubernetes.io/rewrite-target": "/",
-                "ingress.kubernetes.io/rewrite-target": "/"
+                "nginx.ingress.kubernetes.io/rewrite-target": "/$2",
             }
         },
         spec: {

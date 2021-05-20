@@ -1,15 +1,14 @@
 ﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.EventHandling
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using BuildingBlocks.EventBus.Abstractions;
     using BuildingBlocks.EventBus.Events;
     using global::Catalog.API.IntegrationEvents;
     using Infrastructure;
     using IntegrationEvents.Events;
     using Microsoft.Extensions.Logging;
-    using Serilog.Context;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class OrderStatusChangedToAwaitingValidationIntegrationEventHandler :
         IIntegrationEventHandler<OrderStatusChangedToAwaitingValidationIntegrationEvent>
@@ -30,29 +29,27 @@
 
         public async Task Handle(OrderStatusChangedToAwaitingValidationIntegrationEvent @event)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            // using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            _logger.LogInformation("----- Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
+
+            var confirmedOrderStockItems = new List<ConfirmedOrderStockItem>();
+
+            foreach (var orderStockItem in @event.OrderStockItems)
             {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+                var catalogItem = _catalogContext.CatalogItems.Find(orderStockItem.ProductId);
+                var hasStock = catalogItem.AvailableStock >= orderStockItem.Units;
+                var confirmedOrderStockItem = new ConfirmedOrderStockItem(catalogItem.Id, hasStock);
 
-                var confirmedOrderStockItems = new List<ConfirmedOrderStockItem>();
-
-                foreach (var orderStockItem in @event.OrderStockItems)
-                {
-                    var catalogItem = _catalogContext.CatalogItems.Find(orderStockItem.ProductId);
-                    var hasStock = catalogItem.AvailableStock >= orderStockItem.Units;
-                    var confirmedOrderStockItem = new ConfirmedOrderStockItem(catalogItem.Id, hasStock);
-
-                    confirmedOrderStockItems.Add(confirmedOrderStockItem);
-                }
-
-                var confirmedIntegrationEvent = confirmedOrderStockItems.Any(c => !c.HasStock)
-                    ? (IntegrationEvent)new OrderStockRejectedIntegrationEvent(@event.OrderId, confirmedOrderStockItems)
-                    : new OrderStockConfirmedIntegrationEvent(@event.OrderId);
-
-                await _catalogIntegrationEventService.SaveEventAndCatalogContextChangesAsync(confirmedIntegrationEvent);
-                await _catalogIntegrationEventService.PublishThroughEventBusAsync(confirmedIntegrationEvent);
-
+                confirmedOrderStockItems.Add(confirmedOrderStockItem);
             }
+
+            var confirmedIntegrationEvent = confirmedOrderStockItems.Any(c => !c.HasStock)
+                ? (IntegrationEvent)new OrderStockRejectedIntegrationEvent(@event.OrderId, confirmedOrderStockItems)
+                : new OrderStockConfirmedIntegrationEvent(@event.OrderId);
+
+            await _catalogIntegrationEventService.SaveEventAndCatalogContextChangesAsync(confirmedIntegrationEvent);
+            await _catalogIntegrationEventService.PublishThroughEventBusAsync(confirmedIntegrationEvent);
+
         }
     }
 }
