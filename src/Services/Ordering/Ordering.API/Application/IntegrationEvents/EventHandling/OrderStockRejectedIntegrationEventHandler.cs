@@ -1,14 +1,13 @@
 ﻿namespace Ordering.API.Application.IntegrationEvents.EventHandling
 {
+    using System.Linq;
+    using System.Threading.Tasks;
     using Events;
     using MediatR;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions;
     using Microsoft.Extensions.Logging;
     using Ordering.API.Application.Commands;
-    using Serilog.Context;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class OrderStockRejectedIntegrationEventHandler : IIntegrationEventHandler<OrderStockRejectedIntegrationEvent>
     {
@@ -25,26 +24,24 @@
 
         public async Task Handle(OrderStockRejectedIntegrationEvent @event)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
-            {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            // using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            _logger.LogInformation("----- Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
 
-                var orderStockRejectedItems = @event.OrderStockItems
-                    .FindAll(c => !c.HasStock)
-                    .Select(c => c.ProductId)
-                    .ToList();
+            var orderStockRejectedItems = @event.OrderStockItems
+                .FindAll(c => !c.HasStock)
+                .Select(c => c.ProductId)
+                .ToList();
 
-                var command = new SetStockRejectedOrderStatusCommand(@event.OrderId, orderStockRejectedItems);
+            var command = new SetStockRejectedOrderStatusCommand(@event.OrderId, orderStockRejectedItems);
 
-                _logger.LogInformation(
-                    "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-                    command.GetGenericTypeName(),
-                    nameof(command.OrderNumber),
-                    command.OrderNumber,
-                    command);
+            _logger.LogInformation(
+                "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
+                command.GetGenericTypeName(),
+                nameof(command.OrderNumber),
+                command.OrderNumber,
+                command);
 
-                await _mediator.Send(command);
-            }
+            await _mediator.Send(command);
         }
     }
 }

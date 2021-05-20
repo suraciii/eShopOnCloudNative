@@ -4,7 +4,6 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions;
 using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Ordering.API.Application.IntegrationEvents;
-using Serilog.Context;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +44,7 @@ namespace Ordering.API.Application.Behaviors
                     Guid transactionId;
 
                     using (var transaction = await _dbContext.BeginTransactionAsync())
-                    using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
+                    // using (LogContext.PushProperty("TransactionContext", transaction.TransactionId))
                     {
                         _logger.LogInformation("----- Begin transaction {TransactionId} for {CommandName} ({@Command})", transaction.TransactionId, typeName, request);
 

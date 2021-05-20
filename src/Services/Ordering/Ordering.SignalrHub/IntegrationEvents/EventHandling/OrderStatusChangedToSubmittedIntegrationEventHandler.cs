@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Ordering.SignalrHub.IntegrationEvents.Events;
-using Serilog.Context;
-using System;
-using System.Threading.Tasks;
 
 namespace Ordering.SignalrHub.IntegrationEvents.EventHandling
 {
@@ -25,14 +24,12 @@ namespace Ordering.SignalrHub.IntegrationEvents.EventHandling
 
         public async Task Handle(OrderStatusChangedToSubmittedIntegrationEvent @event)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
-            {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            // using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            _logger.LogInformation("----- Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
 
-                await _hubContext.Clients
-                    .Group(@event.BuyerName)
-                    .SendAsync("UpdatedOrderState", new { OrderId = @event.OrderId, Status = @event.OrderStatus });
-            }
+            await _hubContext.Clients
+                .Group(@event.BuyerName)
+                .SendAsync("UpdatedOrderState", new { OrderId = @event.OrderId, Status = @event.OrderStatus });
         }
     }
 }

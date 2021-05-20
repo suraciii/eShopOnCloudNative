@@ -1,11 +1,10 @@
-﻿using MediatR;
+﻿using System.Threading.Tasks;
+using MediatR;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions;
 using Microsoft.Extensions.Logging;
 using Ordering.API.Application.Commands;
 using Ordering.API.Application.IntegrationEvents.Events;
-using Serilog.Context;
-using System.Threading.Tasks;
 
 namespace Ordering.API.Application.IntegrationEvents.EventHandling
 {
@@ -32,21 +31,19 @@ namespace Ordering.API.Application.IntegrationEvents.EventHandling
         /// <returns></returns>
         public async Task Handle(GracePeriodConfirmedIntegrationEvent @event)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
-            {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            // using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            _logger.LogInformation("----- Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
 
-                var command = new SetAwaitingValidationOrderStatusCommand(@event.OrderId);
+            var command = new SetAwaitingValidationOrderStatusCommand(@event.OrderId);
 
-                _logger.LogInformation(
-                    "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-                    command.GetGenericTypeName(),
-                    nameof(command.OrderNumber),
-                    command.OrderNumber,
-                    command);
+            _logger.LogInformation(
+                "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
+                command.GetGenericTypeName(),
+                nameof(command.OrderNumber),
+                command.OrderNumber,
+                command);
 
-                await _mediator.Send(command);
-            }
+            await _mediator.Send(command);
         }
     }
 }

@@ -1,4 +1,8 @@
-﻿using Basket.API.IntegrationEvents.Events;
+﻿using System;
+using System.Net;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Basket.API.IntegrationEvents.Events;
 using Basket.API.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,10 +10,6 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Basket.API.Model;
 using Microsoft.eShopOnContainers.Services.Basket.API.Services;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
 {
@@ -84,7 +84,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ERROR Publishing integration event: {IntegrationEventId} from {AppName}", eventMessage.Id, Program.AppName);
+                _logger.LogError(ex, "ERROR Publishing integration event: {IntegrationEventId}", eventMessage.Id);
 
                 throw;
             }

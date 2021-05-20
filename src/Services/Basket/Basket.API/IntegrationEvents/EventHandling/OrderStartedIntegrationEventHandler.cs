@@ -1,10 +1,9 @@
-﻿using Basket.API.IntegrationEvents.Events;
+﻿using System;
+using System.Threading.Tasks;
+using Basket.API.IntegrationEvents.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Basket.API.Model;
 using Microsoft.Extensions.Logging;
-using Serilog.Context;
-using System;
-using System.Threading.Tasks;
 
 namespace Basket.API.IntegrationEvents.EventHandling
 {
@@ -23,12 +22,10 @@ namespace Basket.API.IntegrationEvents.EventHandling
 
         public async Task Handle(OrderStartedIntegrationEvent @event)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
-            {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+            // using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            _logger.LogInformation("----- Handling integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.Id, @event);
 
-                await _repository.DeleteBasketAsync(@event.UserId.ToString());
-            }
+            await _repository.DeleteBasketAsync(@event.UserId.ToString());
         }
     }
 }

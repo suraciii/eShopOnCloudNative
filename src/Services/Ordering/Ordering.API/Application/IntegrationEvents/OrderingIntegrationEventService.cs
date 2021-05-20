@@ -38,7 +38,7 @@ namespace Ordering.API.Application.IntegrationEvents
 
             foreach (var logEvt in pendingLogEvents)
             {
-                _logger.LogInformation("----- Publishing integration event: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", logEvt.EventId, Program.AppName, logEvt.IntegrationEvent);
+                _logger.LogInformation("----- Publishing integration event: {IntegrationEventId} - ({@IntegrationEvent})", logEvt.EventId, logEvt.IntegrationEvent);
 
                 try
                 {
@@ -48,7 +48,7 @@ namespace Ordering.API.Application.IntegrationEvents
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "ERROR publishing integration event: {IntegrationEventId} from {AppName}", logEvt.EventId, Program.AppName);
+                    _logger.LogError(ex, "ERROR publishing integration event: {IntegrationEventId}", logEvt.EventId);
 
                     await _eventLogService.MarkEventAsFailedAsync(logEvt.EventId);
                 }
