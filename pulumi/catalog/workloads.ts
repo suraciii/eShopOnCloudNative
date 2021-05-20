@@ -45,7 +45,7 @@ function deploy_configmap() {
             labels: shared_labels
         },
         data: {
-            "foo": "bar"
+            "PicBaseUrl": "https://eshop.ichnb.com/webshoppingapigw/c/api/v1/catalog/items/[0]/pic/"
         }
     });
     return configmap;
