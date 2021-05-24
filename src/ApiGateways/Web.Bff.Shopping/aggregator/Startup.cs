@@ -1,4 +1,7 @@
-﻿using CatalogApi;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using CatalogApi;
 using Devspaces.Support;
 using GrpcBasket;
 using GrpcOrdering;
@@ -19,9 +22,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+using Prometheus;
+using Prometheus.DotNetRuntime;
 
 namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
 {
@@ -37,6 +39,9 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+            services.AddSingleton(collector);
+
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddUrlGroup(new Uri(Configuration["CatalogUrlHC"]), name: "catalogapi-check", tags: new string[] { "catalogapi" })
@@ -84,8 +89,10 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseHttpMetrics();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
