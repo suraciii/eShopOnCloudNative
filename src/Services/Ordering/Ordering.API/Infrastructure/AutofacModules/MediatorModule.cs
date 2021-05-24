@@ -16,11 +16,14 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Autof
                 typeof(CreateOrderCommand).GetTypeInfo().Assembly,
                 typeof(ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler).GetTypeInfo().Assembly,
                 typeof(CreateOrderCommandValidator).GetTypeInfo().Assembly
+                //typeof(LoggingBehavior<,>).GetTypeInfo().Assembly,
+                //typeof(ValidatorBehavior<,>).GetTypeInfo().Assembly,
+                //typeof(TransactionBehaviour<,>).GetTypeInfo().Assembly,
             );
 
-            services.AddScoped(typeof(LoggingBehavior<,>), typeof(IPipelineBehavior<,>));
-            services.AddScoped(typeof(ValidatorBehavior<,>), typeof(IPipelineBehavior<,>));
-            services.AddScoped(typeof(TransactionBehaviour<,>), typeof(IPipelineBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviour<,>));
             return services;
         }
     }
