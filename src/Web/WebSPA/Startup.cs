@@ -2,7 +2,6 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
+using Prometheus;
+using Prometheus.DotNetRuntime;
 using System;
 using System.IO;
 using WebSPA.Infrastructure;
@@ -36,6 +36,9 @@ namespace eShopConContainers.WebSPA
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+            services.AddSingleton(collector);
+
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" });
@@ -99,8 +102,10 @@ namespace eShopConContainers.WebSPA
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseHttpMetrics();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
