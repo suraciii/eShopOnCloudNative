@@ -32,6 +32,8 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Ordering.Infrastructure;
+    using Prometheus;
+    using Prometheus.DotNetRuntime;
     using RabbitMQ.Client;
 
     public class Startup
@@ -45,6 +47,9 @@
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
+            var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+            services.AddSingleton(collector);
+
             services
                 .AddGrpc(options =>
                 {
@@ -86,8 +91,10 @@
             app.UseCors("CorsPolicy");
             ConfigureAuth(app);
 
+            app.UseHttpMetrics();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapGrpcService<OrderingService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();

@@ -27,6 +27,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Prometheus;
+using Prometheus.DotNetRuntime;
 using RabbitMQ.Client;
 using StackExchange.Redis;
 
@@ -44,6 +46,9 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
+            var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+            services.AddSingleton(collector);
+
             services.AddGrpc(options =>
             {
                 options.EnableDetailedErrors = true;
@@ -185,8 +190,10 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
             app.UseStaticFiles();
 
+            app.UseHttpMetrics();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapGrpcService<BasketService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();

@@ -27,6 +27,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Prometheus;
+using Prometheus.DotNetRuntime;
 using RabbitMQ.Client;
 
 namespace Microsoft.eShopOnContainers.Services.Catalog.API
@@ -42,6 +44,9 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+            services.AddSingleton(collector);
+
             services
                 .AddGrpc().Services
                 .AddCustomMVC(Configuration)
@@ -71,8 +76,10 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
+            app.UseHttpMetrics();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapGet("/_proto/", async ctx =>

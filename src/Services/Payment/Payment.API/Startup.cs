@@ -10,6 +10,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Payment.API.IntegrationEvents.EventHandling;
 using Payment.API.IntegrationEvents.Events;
+using Prometheus;
+using Prometheus.DotNetRuntime;
 using RabbitMQ.Client;
 
 namespace Payment.API
@@ -26,6 +28,9 @@ namespace Payment.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+            services.AddSingleton(collector);
+
             services.AddCustomHealthCheck(Configuration);
             services.Configure<PaymentSettings>(Configuration);
 
@@ -72,8 +77,10 @@ namespace Payment.API
             ConfigureEventBus(app);
 
             app.UseRouting();
+            app.UseHttpMetrics();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics();
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,
