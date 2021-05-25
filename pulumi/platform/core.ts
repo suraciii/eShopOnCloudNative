@@ -1,7 +1,8 @@
-
-import * as k8s from "@pulumi/kubernetes";
-import * as kx from "@pulumi/kubernetesx";
+import { Namespace, Secret, ServiceAccount } from "@pulumi/kubernetes/core/v1";
+import { Role, RoleBinding } from "@pulumi/kubernetes/rbac/v1";
 import * as pulumi from "@pulumi/pulumi";
+
+const config = new pulumi.Config();
 
 export const team_name = "eshop";
 export const namespace_name = "eshop";
@@ -9,13 +10,14 @@ export const namespace_name = "eshop";
 export function deploy() {
     const { namespace, service_account } = setup_namespace(namespace_name);
     const kubeconfig = getKubeconfig(service_account, namespace_name);
+    const image_pull_secret = create_image_pull_secret(namespace);
 
-    return { namespace, kubeconfig };
+    return { namespace, kubeconfig, image_pull_secret };
 }
 
 
 function setup_namespace(name: string) {
-    const namespace = new k8s.core.v1.Namespace(name, {
+    const namespace = new Namespace(name, {
         metadata: {
             name: name,
             labels: {
@@ -23,15 +25,14 @@ function setup_namespace(name: string) {
             }
         }
     });
-    const service_account = createNamespaceAdminServiceAccount(name);
+    const service_account = createNamespaceAdminServiceAccount(name, namespace);
     return { namespace, service_account };
 }
 
-function getKubeconfig(sa: k8s.core.v1.ServiceAccount, name: string): pulumi.Output<string> {
-    const config = new pulumi.Config();
+function getKubeconfig(sa: ServiceAccount, name: string): pulumi.Output<string> {
     const sa_secret = sa.secrets[0];
     const server_url = config.requireSecret("kubernetes_server_url");
-    const secret_data = sa_secret.apply(v => k8s.core.v1.Secret.get(v.name, `${name}/${v.name}`).data);
+    const secret_data = sa_secret.apply(v => Secret.get(v.name, `${name}/${v.name}`).data);
     const ca_data = secret_data["ca.crt"];
     const token_data = secret_data["token"].apply(v => Buffer.from(v, "base64").toString());
     return _getKubeconfig(server_url, ca_data, token_data);
@@ -61,16 +62,19 @@ users:
     return kubeconfig_content;
 }
 
-function createNamespaceAdminServiceAccount(name: string) {
-    const service_account = new k8s.core.v1.ServiceAccount(`${name}-admin`, {
-        metadata: { name: `${name}-admin`, namespace: name }
+function createNamespaceAdminServiceAccount(name: string, namespace: Namespace) {
+    const service_account = new ServiceAccount(`${name}-admin`, {
+        metadata: {
+            name: `${name}-admin`,
+            namespace: namespace.metadata.name
+        }
     });
     const subject = {
         kind: service_account.kind,
         name: service_account.metadata.name,
         namespace: service_account.metadata.namespace
     };
-    const crb = new k8s.rbac.v1.RoleBinding(`${name}-admin`, {
+    const crb = new RoleBinding(`${name}-admin`, {
         metadata: { name: `${name}-admin`, namespace: name },
         roleRef: {
             apiGroup: "rbac.authorization.k8s.io",
@@ -80,7 +84,7 @@ function createNamespaceAdminServiceAccount(name: string) {
         subjects: [subject]
     });
 
-    const monitoring_manager_role = new k8s.rbac.v1.Role("monitoring-manager", {
+    const monitoring_manager_role = new Role("monitoring-manager", {
         metadata: {
             name: "monitoring-manager",
             namespace: subject.namespace
@@ -91,7 +95,7 @@ function createNamespaceAdminServiceAccount(name: string) {
             verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
         }]
     });
-    const monitoring_manager_role_binding = new k8s.rbac.v1.RoleBinding("monitoring-manager", {
+    const monitoring_manager_role_binding = new RoleBinding("monitoring-manager", {
         metadata: {
             name: "monitoring-manager",
             namespace: subject.namespace
@@ -105,4 +109,29 @@ function createNamespaceAdminServiceAccount(name: string) {
     });
 
     return service_account;
+}
+
+function create_image_pull_secret(namespace: Namespace) {
+    const cr_pat = config.requireSecret("CR_PAT");
+    const dockerconfigjson = cr_pat.apply(v =>
+        JSON.stringify({
+            auths: {
+                "ghcr.io": {
+                    username: 'k8s',
+                    password: v
+                }
+            }
+        })
+    )
+    const image_pull_secret = new Secret("image-pull-secret", {
+        metadata: {
+            namespace: namespace.metadata.name,
+            name: "image-pull-secret"
+        },
+        type: "kubernetes.io/dockerconfigjson",
+        stringData: {
+            ".dockerconfigjson": dockerconfigjson,
+        }
+    });
+    return image_pull_secret;
 }

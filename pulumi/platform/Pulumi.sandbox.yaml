@@ -1,4 +1,6 @@
 config:
+  platform:CR_PAT:
+    secure: AAABAChth9wt2zQBbUgttT+riVd1z/Q6+dcIktCP+V4UdwnbSrzt39PRcu4XIlXJL8eNTiG6P3E3qTLfRVZ6qtLzTmTuBU6E
   platform:kubernetes_server_url:
     secure: AAABAGIIDwmTDbAfF5L0odJbXsz0pw5TYF6A3rGC7kEvx3xKhxMZz5ZmzCu/iyv9tBmUu64Nsh1kRw==
   platform:s3:

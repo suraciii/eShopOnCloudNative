@@ -11,6 +11,7 @@ export function deploy(namespace: k8s.core.v1.Namespace) {
     const redis = new k8s.helm.v3.Chart(name, {
         repo: "bitnami",
         chart: name,
+        version: "14.1.1",
         namespace: namespace.metadata.name,
         values: {
             global: {
