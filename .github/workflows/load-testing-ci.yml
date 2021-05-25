@@ -28,7 +28,7 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: Docker build ${{ env.IMAGE_NAME }}
-      run: sudo -E docker build ${{ env.IMAGE_NAME }}
+      run: sudo -E docker build .
       working-directory: ./load-testing
       shell: bash
       env:
