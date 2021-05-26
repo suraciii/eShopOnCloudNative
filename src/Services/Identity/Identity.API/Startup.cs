@@ -1,4 +1,6 @@
-﻿using HealthChecks.UI.Client;
+﻿using System;
+using System.Reflection;
+using HealthChecks.UI.Client;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -19,8 +21,6 @@ using Microsoft.Extensions.Logging;
 using Prometheus;
 using Prometheus.DotNetRuntime;
 using StackExchange.Redis;
-using System;
-using System.Reflection;
 
 namespace Microsoft.eShopOnContainers.Services.Identity.API
 {
@@ -33,20 +33,23 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
 
         public IConfiguration Configuration { get; }
 
+        public virtual void ConfigureDbContext(DbContextOptionsBuilder builder)
+        {
+            builder.UseSqlServer(Configuration["ConnectionString"],
+                sqlServerOptionsAction: sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                    sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                });
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
             services.AddSingleton(collector);
 
             // Add framework services.
-            services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["ConnectionString"],
-                    sqlServerOptionsAction: sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                        //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
-                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                    }));
+            services.AddDbContext<ApplicationDbContext>(ConfigureDbContext);
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -54,7 +57,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
 
             services.Configure<AppSettings>(Configuration);
 
-            if (Configuration.GetValue<string>("IsClusterEnv") == bool.TrueString)
+            if (Configuration.GetValue<string>("DPConnectionString") != null)
             {
                 services.AddDataProtection(opts =>
                 {
@@ -81,32 +84,18 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
                 x.IssuerUri = "null";
                 x.Authentication.CookieLifetime = TimeSpan.FromHours(2);
             })
-            .AddDevspacesIfNeeded(Configuration.GetValue("EnableDevspaces", false))
             .AddSigningCredential(Certificate.Get())
             .AddAspNetIdentity<ApplicationUser>()
             .AddConfigurationStore(options =>
             {
-                options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString,
-                    sqlServerOptionsAction: sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(migrationsAssembly);
-                        //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
-                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                    });
+                options.ConfigureDbContext = this.ConfigureDbContext;
             })
             .AddOperationalStore(options =>
             {
-                options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString,
-                    sqlServerOptionsAction: sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(migrationsAssembly);
-                        //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
-                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                    });
+                options.ConfigureDbContext = this.ConfigureDbContext;
             })
             .Services.AddTransient<IProfileService, ProfileService>();
 
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddControllers();
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -115,12 +104,6 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            //if (Configuration.GetValue<bool>("Seeding"))
-            //{
-            //    app.Seed();
-            //    return;
-            //}
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -138,13 +121,6 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
             }
 
             app.UseStaticFiles();
-
-            // // Make work identity server redirections in Edge and lastest versions of browers. WARN: Not valid in a production environment.
-            // app.Use(async (context, next) =>
-            // {
-            //     context.Response.Headers.Add("Content-Security-Policy", "script-src 'unsafe-inline'");
-            //     await next();
-            // });
 
             app.UseForwardedHeaders();
             // Adds IdentityServer
