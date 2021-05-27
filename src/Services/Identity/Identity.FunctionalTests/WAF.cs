@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -26,17 +25,10 @@ namespace Identity.FunctionalTests
             var builder = Host.CreateDefaultBuilder()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<TestStartup>();
+                    webBuilder
+                        .UseStartup<TestStartup>();
                 });
             return builder;
         }
-
-        // protected override IHost CreateHost(IHostBuilder builder)
-        // {
-        //     IHost host = builder.Build();
-        //     host.Seed();
-        //     host.Start();
-        //     return host;
-        // }
     }
 }

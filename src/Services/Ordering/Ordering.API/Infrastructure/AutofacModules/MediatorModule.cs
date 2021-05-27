@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using Ordering.API.Application.Behaviors;
 using Ordering.API.Application.DomainEventHandlers.OrderStartedEvent;
 using Ordering.API.Application.Validations;
 

@@ -10,7 +10,6 @@ using Microsoft.eShopOnContainers.Services.Identity.API.Models.Commands;
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Resources.Accounts
 {
     [Route("api/v1/[controller]")]
-    [Authorize]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -22,7 +21,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Resources.Accounts
             _userManager = userManager;
         }
 
-        [HttpPut]
+        [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)

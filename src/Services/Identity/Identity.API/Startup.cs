@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using HealthChecks.UI.Client;
 using IdentityServer4.Services;
@@ -10,14 +11,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.Services.Identity.API.Certificates;
 using Microsoft.eShopOnContainers.Services.Identity.API.Data;
-using Microsoft.eShopOnContainers.Services.Identity.API.Devspaces;
 using Microsoft.eShopOnContainers.Services.Identity.API.Models;
 using Microsoft.eShopOnContainers.Services.Identity.API.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Prometheus;
 using Prometheus.DotNetRuntime;
 using StackExchange.Redis;
@@ -47,6 +47,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
         {
             var collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
             services.AddSingleton(collector);
+            
+            services.ConfigureSwagger(Configuration);
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(ConfigureDbContext);
@@ -104,14 +106,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            app.UseExceptionHandler("/Home/Error");
 
             var pathBase = Configuration["PATH_BASE"];
             if (!string.IsNullOrEmpty(pathBase))
@@ -119,6 +114,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
                 loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
                 app.UsePathBase(pathBase);
             }
+
+            app.UseConfiguredSwagger(pathBase);
 
             app.UseStaticFiles();
 
@@ -135,8 +132,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapMetrics();
-                endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,
@@ -147,6 +144,54 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
                     Predicate = r => r.Name.Contains("self")
                 });
             });
+        }
+
+
+    }
+
+    public static class StartupExtensions
+    {
+        public static IServiceCollection ConfigureSwagger(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "eShopOnContainers - Identity HTTP API",
+                    Version = "v1",
+                    Description = "The Identity Service HTTP API"
+                });
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows()
+                    {
+                        Implicit = new OpenApiOAuthFlow()
+                        {
+                            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+                            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                            Scopes = new Dictionary<string, string>()
+                            {
+                                { "identity", "Identity API" }
+                            }
+                        }
+                    }
+                });
+                // options.OperationFilter<AuthorizeCheckOperationFilter>();
+            });
+
+            return services;
+        }
+        public static IApplicationBuilder UseConfiguredSwagger(this IApplicationBuilder app, string pathBase)
+        {
+            app.UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Identity.API V1");
+                    c.OAuthClientId("identityswaggerui");
+                    c.OAuthAppName("Identity Swagger UI");
+                });
+            return app;
         }
     }
 }
