@@ -1,5 +1,5 @@
 
-import { sleep, check } from 'k6';
+import { check } from 'k6';
 import { Options } from 'k6/options';
 import http from 'k6/http';
 
@@ -36,7 +36,7 @@ export default () => {
             "PhoneNumber": "123123"
         }
     };
-    const res = http.post(`${__ENV.IDENTITY_URL}/api/v1/accounts`, JSON.stringify(reqBody));
+    const res = http.post(`${__ENV.IDENTITY_URL}/api/v1/accounts`, JSON.stringify(reqBody), { headers: { 'Content-Type': 'application/json' } });
     check(res, {
         'status is 200': () => res.status === 200,
     });
