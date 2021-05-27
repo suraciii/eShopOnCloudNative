@@ -117,7 +117,7 @@ function create_image_pull_secret(namespace: Namespace) {
         JSON.stringify({
             auths: {
                 "ghcr.io": {
-                    username: 'k8s',
+                    username: 'ci',
                     password: v
                 }
             }

@@ -7,6 +7,7 @@ on:
     paths:
     - .github/workflows/load-testing-ci.yml
     - load-testing/**
+    - pulumi/load-testing/**
 env:
   IMAGE_NAME: eshop-load-testing
 

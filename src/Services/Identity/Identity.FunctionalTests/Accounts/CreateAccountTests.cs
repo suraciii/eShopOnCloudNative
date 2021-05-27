@@ -42,7 +42,9 @@ namespace Identity.FunctionalTests.Accounts
                     SecurityNumber = "123"
                 }
             };
+            
             var res = await client.PostAsJsonAsync("/api/v1/Accounts", req);
+            var reqBody = System.Text.Json.JsonSerializer.Serialize(req);
             res.EnsureSuccessStatusCode();
         }
 

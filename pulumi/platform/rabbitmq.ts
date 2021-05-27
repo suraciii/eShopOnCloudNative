@@ -15,7 +15,8 @@ export function deploy(namespace: k8s.core.v1.Namespace) {
         namespace: namespace.metadata.name,
         values: {
             auth: {
-                password: rabbitmq_password.result
+                password: rabbitmq_password.result,
+                erlangCookie: "8agRbKLvqNcoP8PNVfc6RQtoHZa1r7ZZ"
             },
             persistence: {
                 enabled: false

@@ -1,16 +1,5 @@
-import { sleep, check } from 'k6';
-import { Options } from 'k6/options';
-import http from 'k6/http';
+import * as accounts_create from "./accounts-create";
 
-export let options:Options = {
-  vus: 50,
-  duration: '10s'
-};
 
-export default () => {
-  const res = http.get('https://test-api.k6.io');
-  check(res, {
-    'status is 200': () => res.status === 200,
-  });
-  sleep(1);
-};
+export const options = accounts_create.options;
+export default accounts_create.default;
