@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.Services.Identity.API.Models;
 using Microsoft.eShopOnContainers.Services.Identity.API.Models.Commands;
 
@@ -24,7 +26,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Resources.Accounts
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateAccountRequest request)
         {
             if (ModelState.IsValid)
             {
@@ -58,6 +60,22 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Resources.Accounts
             }
             return BadRequest(ModelState);
         }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(List<AccountListItem>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> List()
+        {
+            var accounts = await _userManager.Users
+                .Select(user => new AccountListItem
+                {
+                    UserName = user.UserName
+                })
+                .ToListAsync();
+
+            return Ok(accounts);
+        }
+
 
         private void AddErrors(IdentityResult result)
         {

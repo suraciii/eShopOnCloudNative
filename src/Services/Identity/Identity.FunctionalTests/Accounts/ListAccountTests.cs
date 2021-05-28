@@ -3,23 +3,42 @@ using System.Net.Http.Json;
 using Microsoft.eShopOnContainers.Services.Identity.API.Models;
 using Microsoft.eShopOnContainers.Services.Identity.API.Models.Commands;
 using Xunit;
+using System.Collections.Generic;
+using System.Net.Http;
 
 namespace Identity.FunctionalTests.Accounts
 {
-    public class CreateAccountTests : IClassFixture<WAF>
+    public class ListAccountTests : IClassFixture<WAF>
     {
         private readonly WAF _waf;
 
-        public CreateAccountTests(WAF waf)
+        public ListAccountTests(WAF waf)
         {
             this._waf = waf;
         }
 
         [Fact]
-        public async Task CreateAccount()
+        public async Task ListAccountsEmpty()
         {
             var client = _waf.CreateClient();
 
+            var res = await client.GetFromJsonAsync<List<AccountListItem>>("/api/v1/Accounts");
+            Assert.Empty(res);
+        }
+
+        [Fact]
+        public async Task ListAccounts()
+        {
+            var client = _waf.CreateClient();
+
+            await CreateAccount(client);
+
+            var res = await client.GetFromJsonAsync<List<AccountListItem>>("/api/v1/Accounts");
+            Assert.Single(res);
+        }
+
+        private static async Task CreateAccount(HttpClient client)
+        {
             var req = new CreateAccountRequest
             {
                 Email = "testuser@test.tt",
@@ -42,9 +61,8 @@ namespace Identity.FunctionalTests.Accounts
                     SecurityNumber = "123"
                 }
             };
-            
+
             var res = await client.PostAsJsonAsync("/api/v1/Accounts", req);
-            var reqBody = System.Text.Json.JsonSerializer.Serialize(req);
             res.EnsureSuccessStatusCode();
         }
     }
