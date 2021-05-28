@@ -36,6 +36,27 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
         {
             return new List<Client>
             {
+                new Client
+                {
+                    ClientId = "test",
+                    ClientName = "Testing",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    RequireConsent = false,
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "orders",
+                        "basket",
+                        "webshoppingagg",
+                        "orders.signalrhub",
+                        "webhooks"
+                    },
+                },
                 // JavaScript Client
                 new Client
                 {
