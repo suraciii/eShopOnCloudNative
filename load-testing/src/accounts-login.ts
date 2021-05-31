@@ -7,10 +7,13 @@ export let options: Options = {
     discardResponseBodies: true,
     scenarios: {
         account_getToken: {
-            executor: 'per-vu-iterations',
-            vus: 500,
-            iterations: 20,
-            maxDuration: '10m',
+            executor: 'ramping-vus',
+            startVUs: 0,
+            stages: [
+                { duration: '5s', target: 100 },
+                { duration: '5s', target: 0 },
+            ],
+            gracefulRampDown: '0s',
         },
     },
 };

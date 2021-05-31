@@ -1,5 +1,5 @@
 {
-    "name": "basket-api",
+    "name": "load-testing",
     "devDependencies": {
         "@types/node": "^10.0.0"
     },
