@@ -1,12 +1,12 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.Services.Identity.API.Configuration;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Microsoft.eShopOnContainers.Services.Identity.API.Data
 {
@@ -28,9 +28,13 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Data
             clientUrls.Add("WebhooksApi", configuration.GetValue<string>("WebhooksApiClient"));
             clientUrls.Add("WebhooksWeb", configuration.GetValue<string>("WebhooksWebClient"));
 
-            if (!context.Clients.Any())
+            var existingClients = await context.Clients.ToListAsync();
+            var clientsToAdd = Config.GetClients(clientUrls)
+                .Where(c => !existingClients.Any(ec => ec.ClientId == c.ClientId))
+                .ToList();
+            if (clientsToAdd.Any())
             {
-                foreach (var client in Config.GetClients(clientUrls))
+                foreach (var client in clientsToAdd)
                 {
                     context.Clients.Add(client.ToEntity());
                 }
