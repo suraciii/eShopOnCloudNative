@@ -3,24 +3,29 @@ import { team_name } from "./core";
 import { Namespace, Secret, Service, ServiceAccount } from "@pulumi/kubernetes/core/v1";
 import { Deployment, StatefulSet } from "@pulumi/kubernetes/apps/v1";
 import { ServiceMonitor } from "@pulumi/prometheus-operator-crds/monitoring/v1";
+import { labels_without_version } from "./utils";
 
-const query_labels: { [key: string]: string } = {
+const shared_labels = {
+    "team": team_name,
+    "app.kubernetes.io/part-of": "eshop-monitoring",
+    "app.kubernetes.io/version": "v0.19.0",
+}
+
+const query_labels = {
     "app.kubernetes.io/component": "query-layer",
     "app.kubernetes.io/instance": "thanos-query",
     "app.kubernetes.io/name": "thanos-query",
-    "app.kubernetes.io/version": "v0.19.0",
-    "team": team_name
+    ...shared_labels
 };
-const query_labels_without_version = (({ ["app.kubernetes.io/version"]: _, ...o }) => o)(query_labels);
+const query_labels_without_version = labels_without_version(query_labels);
 
-const store_labels: { [key: string]: string } = {
+const store_labels = {
     "app.kubernetes.io/component": "object-store-gateway",
     "app.kubernetes.io/instance": "thanos-store",
     "app.kubernetes.io/name": "thanos-store",
-    "app.kubernetes.io/version": "v0.19.0",
-    "team": team_name
+    ...shared_labels
 };
-const store_labels_without_version: { [key: string]: string } = (({ ["app.kubernetes.io/version"]: _, ...o }) => o)(store_labels);
+const store_labels_without_version = labels_without_version(store_labels);
 
 export function deploy(namespace: Namespace, object_storage_secret: pulumi.Output<Secret>) {
     const sidecar_service = deploy_sidecar_service(namespace);
@@ -392,5 +397,3 @@ function deploy_query_service_monitor(service: Service) {
     });
     return service_monitor;
 }
-
-

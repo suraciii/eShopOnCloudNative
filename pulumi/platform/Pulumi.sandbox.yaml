@@ -1,6 +1,13 @@
 config:
   platform:CR_PAT:
     secure: AAABALe2XMS+brGF/FK7ikchikRa7bCGLYy1qU2Y2xIulWdsU5CEUJW1QrwrzvC3qz4SmnjFVqh2a3RkMLC/g9ivNThpik0r
+  platform:amwh_dingtalk_config:
+    access_token:
+      secure: AAABAOvDj7xPutWricnlkwmy9gATBiK5gqe3u3Z5De7Ij9Yo4xD8+w6Gbz49IAJnxvPt+dkjq2bK0nkMmLW9+Nwo9wlhRw3iOkn/3IfREgsoqqyCT3eZTyiEP8lTe2Es
+    mention:
+      secure: AAABAMW5/PPwq2fmpal2TE3d6olMaiXGm48tJRS47esLSOxweJnOWJAGhA==
+    secret:
+      secure: AAABACj3my83xVGBVqzdCiQ1wzwa6K+GRzyPVKbAjMlyeP3SHq4jpl//hb9rTFp+luGO+iLjaZxliSjJDRgeUsA33UCXNU36ulT+4DdwTsJlmy4Nt46b3/naKmRKB4Uvyxzo
   platform:kubernetes_server_url:
     secure: AAABAGIIDwmTDbAfF5L0odJbXsz0pw5TYF6A3rGC7kEvx3xKhxMZz5ZmzCu/iyv9tBmUu64Nsh1kRw==
   platform:s3:
