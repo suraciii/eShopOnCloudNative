@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using HealthChecks.UI.Client;
+using Identity.API.Monitoring;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -129,6 +130,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API
             app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = AspNetCore.Http.SameSiteMode.Lax });
             app.UseRouting();
             app.UseHttpMetrics();
+            UserMonitoring.CollectUserCount(app.ApplicationServices);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapMetrics();
