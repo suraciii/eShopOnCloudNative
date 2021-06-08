@@ -48,7 +48,7 @@ class BasketUpdateSimulation extends Simulation {
 
   var ip = Seq(
     atOnceUsers(10),
-    rampUsers(800).during(80.seconds),
+    rampUsers(600).during(80.seconds),
   )
 
   setUp(

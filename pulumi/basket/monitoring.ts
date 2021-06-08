@@ -1,5 +1,6 @@
 import { Service } from "@pulumi/kubernetes/core/v1";
 import { PrometheusRule, ServiceMonitor } from "@pulumi/prometheus-operator-crds/monitoring/v1";
+import { app_name_api, service_name } from "./core";
 
 export function deploy(name: string, service: Service) {
     return {
@@ -43,10 +44,26 @@ function deploy_prometheus_rule(name: string, service: Service) {
                 rules: [{
                     alert: "SLOFailed",
                     annotations: {
-                        "summary": "BasketService has p95 requests with latency > 300ms"
+                        "summary": `Service has p95 requests with latency > 300ms`
                     },
                     expr: `
-                    histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service="basket-api"}[1m])) by (le))
+                    histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service="${app_name_api}"}[1m])) by (le))
+                    > 0.3
+                    `,
+                    for: "1m",
+                    labels: {
+                        severity: "warning"
+                    }
+                }, {
+                    alert: "HttpErrorRateTooHigh",
+                    annotations: {
+                        "summary": "Http Request with 5xx > 10%"
+                    },
+                    expr: `
+                    (sum(rate(http_requests_received_total{code=~"5..", service="${app_name_api}"}[1m]))
+                    /
+                    sum(rate(http_requests_received_total{service="${app_name_api}"}[1m])))
+                    > 0.1
                     `,
                     for: "1m",
                     labels: {

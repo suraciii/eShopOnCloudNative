@@ -91,7 +91,7 @@ function createNamespaceAdminServiceAccount(name: string, namespace: Namespace) 
         },
         rules: [{
             apiGroups: ["monitoring.coreos.com"],
-            resources: ["servicemonitors"],
+            resources: ["servicemonitors", "prometheusrules"],
             verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
         }]
     });
