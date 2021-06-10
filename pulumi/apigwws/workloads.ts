@@ -42,7 +42,10 @@ function deploy_app(configmap: ConfigMap) {
             },
             template: {
                 metadata: {
-                    labels: shared_labels
+                    labels: shared_labels,
+                    annotations:{
+                        "linkerd.io/inject": "enabled"
+                    }
                 },
                 spec: {
                     volumes: [{

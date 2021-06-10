@@ -75,7 +75,10 @@ function deploy_deployment(configmap: ConfigMap, secret: Secret) {
             },
             template: {
                 metadata: {
-                    labels: labels
+                    labels: labels,
+                    annotations: {
+                        "linkerd.io/inject": "enabled"
+                    }
                 },
                 spec: {
                     containers: [{

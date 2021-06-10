@@ -64,7 +64,10 @@ function deploy_app(app_name: string, image_name: string, configmap: ConfigMap, 
             },
             template: {
                 metadata: {
-                    labels: labels
+                    labels: labels,
+                    annotations: {
+                        "linkerd.io/inject": "enabled"
+                    }
                 },
                 spec: {
                     containers: [{

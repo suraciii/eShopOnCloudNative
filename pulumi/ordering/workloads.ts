@@ -127,7 +127,10 @@ function deploy_app(app_name: string,
             },
             template: {
                 metadata: {
-                    labels: labels
+                    labels: labels,
+                    annotations: {
+                        "linkerd.io/inject": "enabled"
+                    }
                 },
                 spec: {
                     containers: [{

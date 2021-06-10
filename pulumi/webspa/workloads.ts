@@ -1,10 +1,9 @@
+import { ConfigMap, Secret, Service, ServiceSpecType } from "@pulumi/kubernetes/core/v1";
+import { app_name, base_domain, image_repo, namespace_name, shared_labels, team_name } from "./core";
+import { Deployment } from "@pulumi/kubernetes/apps/v1";
 import * as pulumi from "@pulumi/pulumi";
-import * as k8s from "@pulumi/kubernetes";
-import { ServiceSpecType } from "@pulumi/kubernetes/core/v1";
-import * as kx from "@pulumi/kubernetesx";
-import { app_name, base_domain, image_repo, namespace_name, team_name } from "./core";
+import { Ingress } from "@pulumi/kubernetes/extensions/v1beta1";
 
-const config = new pulumi.Config();
 
 export function deploy() {
 
@@ -18,7 +17,7 @@ export function deploy() {
 
 
 function deploy_secret() {
-    const secret = new k8s.core.v1.Secret(app_name, {
+    const secret = new Secret(app_name, {
         metadata: {
             namespace: namespace_name,
             name: app_name
@@ -33,7 +32,7 @@ function deploy_secret() {
 }
 
 function deploy_configmap() {
-    const configmap = new k8s.core.v1.ConfigMap(app_name, {
+    const configmap = new ConfigMap(app_name, {
         metadata: {
             namespace: namespace_name,
             name: app_name
@@ -50,54 +49,72 @@ function deploy_configmap() {
     return configmap;
 }
 
-function deploy_deployment(configmap: k8s.core.v1.ConfigMap, secret: k8s.core.v1.Secret) {
+function deploy_deployment(configmap: ConfigMap, secret: Secret) {
     const image_version = process.env["IMAGE_VERSION"];
     if (!image_version) { throw "missing IMAGE_VERSION" }
-    const pb = new kx.PodBuilder({
-        containers: [{
-            image: `${image_repo}:linux-${image_version}`,
-            ports: { http: 80 },
-            livenessProbe: {
-                httpGet: {
-                    path: "/liveness",
-                    port: 80
-                }
-            },
-            readinessProbe: {
-                httpGet: {
-                    path: "/hc",
-                    port: 80
-                }
-            },
-            env: [{
-                name: "PATH_BASE",
-                value: "/"
-            }, {
-                name: "ASPNETCORE_ENVIRONMENT",
-                value: pulumi.getStack()
-            }],
-            envFrom: [{
-                secretRef: { name: secret.metadata.name }
-            }, {
-                configMapRef: { name: configmap.metadata.name }
-
-            }],
-        }],
-    });
-
-    const deployment = new kx.Deployment(app_name, {
+    const labels: { [key: string]: string } = {
+        app: app_name,
+        ...shared_labels
+    };
+    const deployment = new Deployment(app_name, {
         metadata: {
             name: app_name,
             namespace: namespace_name,
         },
-        spec: pb.asDeploymentSpec({ replicas: 1 })
+        spec: {
+            selector: {
+                matchLabels: labels
+            },
+            template: {
+                metadata: {
+                    labels: labels,
+                    annotations: {
+                        "linkerd.io/inject": "enabled"
+                    }
+                },
+                spec: {
+                    containers: [{
+                        name: app_name,
+                        image: `${image_repo}:linux-${image_version}`,
+                        ports: [{
+                            name: 'http',
+                            containerPort: 80
+                        }],
+                        livenessProbe: {
+                            httpGet: {
+                                path: "/liveness",
+                                port: 80
+                            }
+                        },
+                        readinessProbe: {
+                            httpGet: {
+                                path: "/hc",
+                                port: 80
+                            }
+                        },
+                        env: [{
+                            name: "PATH_BASE",
+                            value: "/"
+                        }, {
+                            name: "ASPNETCORE_ENVIRONMENT",
+                            value: pulumi.getStack()
+                        }],
+                        envFrom: [{
+                            secretRef: { name: secret.metadata.name }
+                        }, {
+                            configMapRef: { name: configmap.metadata.name }
+                        }],
+                    }],
+                }
+            }
+        }
     });
 
     return deployment;
 }
 
-function deploy_service(deployment: kx.Deployment) {
-    return new k8s.core.v1.Service(app_name, {
+function deploy_service(deployment: Deployment) {
+    return new Service(app_name, {
         metadata: {
             name: app_name,
             namespace: namespace_name,
@@ -114,8 +131,8 @@ function deploy_service(deployment: kx.Deployment) {
     });
 }
 
-function deploy_ingress(service: k8s.core.v1.Service) {
-    return new k8s.networking.v1beta1.Ingress(app_name, {
+function deploy_ingress(service: Service) {
+    return new Ingress(app_name, {
         metadata: {
             name: app_name,
             namespace: namespace_name,
